@@ -17,8 +17,8 @@ function classNames(...classes: string[]) {
 
 export default function NavBar() {
     return (
-        <Disclosure as="nav" className="relative rounded-md border-none bg-gradient-to-t from-slate-50 from-0% via-stone-50 via-25% to-blue-400 to-100%">
-            <div className="md:w-full bg-sky-300 dark:bg-gray-800 px-2 sm:px-6 lg:px-8">
+        <Disclosure as="nav" className="relative rounded-md border-none bg-gradient-to-t from-slate-50 via-stone-50 to-blue-400">
+            <div className="md:w-full dark:bg-gray-800 px-2 sm:px-6 lg:px-8">
                 <div className="relative flex h-16 items-center justify-between">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                         {/* Mobile menu button*/}
