@@ -1,0 +1,80 @@
+// src/components/Login/LoginForm.tsx
+
+import { useAtom } from "jotai";
+
+import { AuthActionProps } from "@/types";
+import { MailAtom, PasswordAtom, ErrorMessageAtom } from "@/atoms/singup.atom";
+import { isLogedInAtom } from "@/atoms/login.atom";
+
+
+export default function LoginForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
+    const [email, setEMail] = useAtom(MailAtom);
+    const [password, setPassword] = useAtom(PasswordAtom);
+    const [errorMessage, setErrorMessage] = useAtom(ErrorMessageAtom);
+    const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("Send request for", { email, password });
+        onSubmit(true);
+        try {
+            const response = await fetch(action, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                // エラー処理
+                throw new Error("Request failed");
+            }
+
+            if (onSuccess) {
+                const data = await response.json();
+                onSuccess(data);
+                setIsLogedIn(true);
+            } else {
+                alert("Login successful");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+                if (onError) onError({ message: error.message });
+            }
+            onSubmit(false);
+        }
+    };
+
+    return (
+        <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">メールアドレス</label>
+                <input type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    required
+                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                    onChange={(e) => setEMail(e.target.value)}
+                />
+            </div>
+            <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">パスワード</label>
+                <input type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    required
+                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </div>
+            <button type="submit"
+                className="w-full rounded-md bg-blue-500 py-2 text-white font-semibold hover:bg-blue-600 transition"
+                disabled={!email || !password}
+            >
+                ログイン
+            </button>
+        </form>
+    );
+}
