@@ -9,7 +9,7 @@ import SignupForm from "@/components/Signup/SignupForm";
 
 export default function SignupPage() {
     const [submitted, setSubmitted] = useState(false);
-    
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-300">
             <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
