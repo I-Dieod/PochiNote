@@ -23,7 +23,7 @@ const data02 = [
     { name: 'D2', value: 50 },
 ];
 
-export default function CircleChart() {
+export const CircleChart = () =>{
     return (
         <div className="md:w-1/3 rounded-md border-double border-4 border-gray-200">
             <h1>Circle Chart</h1>
