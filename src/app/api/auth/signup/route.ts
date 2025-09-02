@@ -32,13 +32,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         // 重複チェック
         const existingUser = await getUserByEmail(email);
-        const existingUserName = await getUserByEmail(userName);
-        if (existingUser && !existingUserName) {
+        if (existingUser) {
             return NextResponse.json(
                 { message: "Email already in use" },
                 { status: 409 }
             );
         }
+        const existingUserName = await getUserByEmail(userName);
+        if (existingUserName) {
+            return NextResponse.json(
+                { message: "UserName already in use" },
+                { status: 409 }
+            );
+        }
+
 
         // パスワードハッシュ化
         const passwordHash = await bcrypt.hash(password, 10);
