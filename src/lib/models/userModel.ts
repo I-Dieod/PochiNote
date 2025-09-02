@@ -34,3 +34,17 @@ export const getUserByEmail = async (email: string) => {
         throw new Error("Failed to get user by email");
     }
 }
+
+export const getUserByUserName = async (userName: string) => {
+    try {
+        const [result] = await db.select().from(users).where(eq(users.userName, userName));
+        if (!result) {
+            console.warn(`User with userName ${userName} not found`);
+            return null;
+        }
+        return result;
+    } catch (error) {
+        console.error("Error in getUserByUserName function:", error);
+        throw new Error("Failed to get user by userName");
+    }
+}

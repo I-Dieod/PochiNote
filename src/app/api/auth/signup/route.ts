@@ -32,7 +32,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         // 重複チェック
         const existingUser = await getUserByEmail(email);
-        if (existingUser) {
+        const existingUserName = await getUserByEmail(userName);
+        if (existingUser && !existingUserName) {
             return NextResponse.json(
                 { message: "Email already in use" },
                 { status: 409 }

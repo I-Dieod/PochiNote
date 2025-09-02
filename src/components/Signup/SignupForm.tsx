@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 import { AuthActionProps } from "@/types";
-import { UserNameAtom, MailAtom, PasswordAtom, ConfirmPasswordAtom, ErrorMessageAtom } from "@/atoms/singup.atom";
+import { UserNameAtom, MailAtom, PasswordAtom, ConfirmPasswordAtom, ErrorMessageAtom } from "@/atoms/auth/singup.atom";
 
 export default function SignupForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
     const [userName, setUserName] = useAtom(UserNameAtom);
@@ -50,6 +50,12 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
             } else {
                 alert("Signup successful");
             }
+            {/* TODO:サインアップ時にログインした状態でリダイレクトする処理を加える */}
+            await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
 
             // 成功時のリダイレクト
             setTimeout(() => {
