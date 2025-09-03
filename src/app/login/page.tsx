@@ -20,6 +20,9 @@ export default function LoginPage() {
                     onSuccess={(response) => console.log("Login successful:", response)}
                     onError={(error) => console.error("Login error:", error)}
                 />
+                <div className="pt-7 text-center">
+                    <p>または<a href="/signup" className="no-underline hover:underline text-blue-600">サインアップ</a></p>
+                </div>
             </div>
         </div>
     );
