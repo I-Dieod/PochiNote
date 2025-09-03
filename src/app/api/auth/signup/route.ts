@@ -29,6 +29,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                 { status: 400 }
             );
         }
+        if (userName == password) {
+            return NextResponse.json(
+                { message: "User Name and Password must be different"},
+                { status: 400 }
+            )
+        }
 
         // 重複チェック
         const existingUser = await getUserByEmail(email);
@@ -61,7 +67,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         // 必要な情報のみ返す
         return NextResponse.json(
-            { message: "User created successfully", user: { email, userName } },
+            {
+                success: true,
+                message: "User created successfully",
+                user: {
+                    email: email,
+                    userName: userName
+                }
+            },
             { status: 201 }
         );
     } catch (error) {

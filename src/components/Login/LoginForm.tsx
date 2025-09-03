@@ -5,13 +5,14 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 import { AuthActionProps } from "@/types";
-import { MailAtom, PasswordAtom, ErrorMessageAtom } from "@/atoms/singup.atom";
-import { isLogedInAtom } from "@/atoms/login.atom";
+import { MailAtom, PasswordAtom, ErrorMessageAtom } from "@/atoms/auth/singup.atom";
+import { authTokenAtom, isLogedInAtom } from "@/atoms/auth/login.atom";
 
 
 export default function LoginForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
     const [email, setEMail] = useAtom(MailAtom);
     const [password, setPassword] = useAtom(PasswordAtom);
+    const [authToken, setAuthToken] = useAtom(authTokenAtom);
     const [errorMessage, setErrorMessage] = useAtom(ErrorMessageAtom);
     const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
     // ローディング状態を管理
@@ -43,12 +44,18 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
                 throw new Error("Request failed");
             }
 
-            if (onSuccess) {
-                const data = await response.json();
-                onSuccess(data);
+            const data = await response.json();
+            if (data.success) {
+                if (data.token) {
+                    setAuthToken(data.token);
+                }
                 setIsLogedIn(true);
-            } else {
-                alert("Login successful");
+
+                if (onSuccess) {
+                    onSuccess(data);
+                } else {
+                    alert("Login successful");
+                }
             }
 
             // 成功時のリダイレクト

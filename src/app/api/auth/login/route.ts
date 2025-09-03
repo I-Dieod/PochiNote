@@ -1,8 +1,13 @@
 // src/app/api/auth/login/route.ts
 
-import { getUserByEmail } from "@/lib/models/userModel";
 import bcrypt from "bcryptjs";
+import { useAtom } from "jotai";
 import { NextRequest, NextResponse } from "next/server";
+import { SignJWT, jwtVerify } from 'jose';
+
+import { authTokenAtom } from "@/atoms/auth/login.atom";
+import { getUserByEmail } from "@/lib/models/userModel";
+import { redisClient } from "@/lib/config/redisClient";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
@@ -50,8 +55,52 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         console.log("User Login successfully:", { user });
         // 成功レスポンス
+        {/* TODO:セッションによるユーザー情報の状態管理 */ }
+        // トークン生成
+        const jwtSecret = process.env.JWT_SECRET
+        if (!jwtSecret) {
+            console.error("JWT_SECRET is not defined");
+            return NextResponse.json(
+                { error: "Server configuration error" },
+                { status: 500 }
+            );
+        }
+        let token: string;
+        try {
+            token = await new SignJWT({ userId: 123 })
+                .setProtectedHeader({ alg: 'HS256' })
+                .setExpirationTime('1h')
+                .sign(new TextEncoder().encode(jwtSecret));
+        } catch (error) {
+            console.error("Error generating JWT:", error);
+            return NextResponse.json(
+                { erorr: "Failed to generate token" },
+                { status: 500 }
+            );
+        }
+        // トークン保存
+        try {
+            await redisClient.set(`user:${user.userName}`, token, { EX: 3600 }); // TODO:セッションちゃんと切れるか確認
+            console.log(`Saved JWT in redis: user: ${user.userName} -> ${token}`)
+        } catch (error) {
+            console.error("Failed to save JWT for redis");
+            return NextResponse.json(
+                { error: "Failed to save token" },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
-            { message: "Login successful", user: { email } },
+            {
+                success: true,
+                message: "Login successful",
+                token: token,
+                user: {
+                    id: user.tableId,
+                    userName: user.userName,
+                    email: user.email
+                }
+            },
             { status: 200 }
         );
     } catch (error) {

@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
+import { NextResponse } from "next/server";
 
 import { AuthActionProps } from "@/types";
 import { UserNameAtom, MailAtom, PasswordAtom, ConfirmPasswordAtom, ErrorMessageAtom } from "@/atoms/auth/singup.atom";
+import { isLogedInAtom, authTokenAtom } from "@/atoms/auth/login.atom";
 
 export default function SignupForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
     const [userName, setUserName] = useAtom(UserNameAtom);
@@ -13,6 +15,8 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
     const [password, setPassword] = useAtom(PasswordAtom);
     const [confirmPassword, setConfirmPassword] = useAtom(ConfirmPasswordAtom);
     const [errorMessage, setErrorMessage] = useAtom(ErrorMessageAtom);
+    const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom)
+    const [authToken, setAuthToken] = useAtom(authTokenAtom);
     // ローディング状態を管理
     const [isLoading, setIsLoading] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -33,41 +37,73 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
         onSubmit(true);
 
         try {
-            const response = await fetch(action, {
+            const signupResponse = await fetch(action, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userName, email, password }),
             });
 
-            if (!response.ok) {
+            if (!signupResponse.ok) {
                 // エラー処理
                 throw new Error("Request failed");
             }
 
-            if (onSuccess) {
-                const data = await response.json();
-                onSuccess(data);
-            } else {
-                alert("Signup successful");
+            const signupData = await signupResponse.json();
+            if (!signupData.success) {
+                throw new Error(signupData.error || "Signup failed");
             }
-            {/* TODO:サインアップ時にログインした状態でリダイレクトする処理を加える */}
-            await fetch("/api/auth/login", {
+            console.log("Signup successful, attempting auto-login...");
+
+            // 自動ログイン処理
+            const loginResponse = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
+            if (!loginResponse.ok) {
+                throw new Error("Auto-login failed");
+            }
 
-            // 成功時のリダイレクト
-            setTimeout(() => {
-                if (isMounted && typeof window !== "undefined") {
-                    router.push("/"); // ホームページへリダイレクト
+            const loginData = await loginResponse.json();
+            if (loginData.success && loginData.token) {
+                // 認証状態を設定
+                setAuthToken(loginData.token);
+                setIsLogedIn(true);
+
+                console.log("Auto-login successful, redirecting...");
+
+                // カスタム成功処理があれば実行
+                if (onSuccess) {
+                    onSuccess(loginData);
+                } else {
+                    alert("サインアップが完了しました！");
                 }
-            }, 1000); // 1秒後にリダイレクト（ユーザーに成功メッセージを見せる時間）
+
+                // 成功時のリダイレクト
+                setTimeout(() => {
+                    if (isMounted && typeof window !== "undefined") {
+                        router.push("/"); // ホームページへリダイレクト
+                    }
+                }, 1000); // 1秒後にリダイレクト（ユーザーに成功メッセージを見せる時間）
+            } else {
+                // ログイン失敗時の処理
+                console.warn("Auto-login failed, but signup was successful");
+                alert("サインアップは成功しましたが、自動ログインに失敗しました。ログインページで手動でログインしてください。");
+
+                setTimeout(() => {
+                    if (isMounted && typeof window !== "undefined") {
+                        router.push("/login");
+                    }
+                }, 1000);
+            }
 
         } catch (error) {
+            console.error("Signup/Login error:", error);
             if (error instanceof Error) {
                 setErrorMessage(error.message);
-                if (onError) onError(error);
+                if (onError) {
+                    onError({ message: error.message });
+                }
             }
             onSubmit(false);
         } finally {
