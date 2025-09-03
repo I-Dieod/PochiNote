@@ -1,11 +1,9 @@
 // src/app/api/auth/login/route.ts
 
 import bcrypt from "bcryptjs";
-import { useAtom } from "jotai";
 import { NextRequest, NextResponse } from "next/server";
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT } from 'jose';
 
-import { authTokenAtom } from "@/atoms/auth/login.atom";
 import { getUserByEmail } from "@/lib/models/userModel";
 import { redisClient } from "@/lib/config/redisClient";
 
@@ -55,7 +53,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         console.log("User Login successfully:", { user });
         // 成功レスポンス
-        {/* TODO:セッションによるユーザー情報の状態管理 */ }
         // トークン生成
         const jwtSecret = process.env.JWT_SECRET
         if (!jwtSecret) {
@@ -66,15 +63,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             );
         }
         let token: string;
+        const userName = user.userName
         try {
-            token = await new SignJWT({ userId: 123 })
+            token = await new SignJWT({ userName })
                 .setProtectedHeader({ alg: 'HS256' })
                 .setExpirationTime('1h')
                 .sign(new TextEncoder().encode(jwtSecret));
         } catch (error) {
             console.error("Error generating JWT:", error);
             return NextResponse.json(
-                { erorr: "Failed to generate token" },
+                { error: "Failed to generate token" },
                 { status: 500 }
             );
         }
