@@ -46,3 +46,4 @@ package-lock.json
 docker-compose.yml
 Dockerfile
 src/atoms/auth
+src/lib/config/db/migrations
