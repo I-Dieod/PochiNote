@@ -11,3 +11,27 @@ export type AuthActionProps = {
     onSuccess?: (response: any) => void;
     onError?: (error: any) => void;
 }
+
+export type DataActionProps = {
+    action: "/api/data/add" | "/api/data/fetch";
+    onSubmit: React.Dispatch<React.SetStateAction<boolean>>;
+    onSuccess: (data: any) => void;
+    onError: (error: any) => void;
+    onClose: () => void;
+}
+
+export interface Category {
+    categoryId: string;
+    categoryName: string;
+    categoryType: 'income' | 'expense';
+    description?: string;
+}
+
+export interface Transaction {
+    transactionId: number;
+    transactionType: "income" | "expense";
+    amount: string;
+    categoryName: string;
+    description?: string;
+    transactionDate: string;
+}

@@ -2,16 +2,25 @@
 
 "use client";
 
-import { isLogedInAtom } from "@/atoms/auth/login.atom";
+import { useEffect } from "react";
+import { useAtom } from "jotai";
+
+import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { BalanceChart } from "@/components/Home/BalanceChart";
 import { CircleChart } from "@/components/Home/CircleChart";
 import NavBar from "@/components/Home/NavBar";
-import NoteTable from "@/components/Home/NoteTable";
-import { useAtom } from "jotai";
+import NoteTable from "@/components/Home/TransactionTable";
 
 export default function Home() {
   const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
-  setIsLogedIn(true);
+
+  // デバッグ用ログ
+  useEffect(() => {
+    console.log("Page rendered with isLogedIn:", isLogedIn);
+  }, [isLogedIn]);
+
+  console.log("Home component rendering, isLogedIn:", isLogedIn);
+
   return (
     <>
       {isLogedIn ? (
@@ -19,12 +28,11 @@ export default function Home() {
           <div id="NavBar-Container">
             <NavBar />
           </div>
-          <div id="Chart-Containers" className="flex flex-col md:flex-row md:h-1/4 gap-4 p-4 dark:bg-gray-900">
+          <div id="Chart-Containers" className="flex flex-col md:flex-row h-150 gap-4 p-4 dark:bg-gray-900">
             <BalanceChart />
             <CircleChart />
           </div>
           <div id="Table-Container" className="w-full p-4">
-            <h1>Table</h1>
             <NoteTable />
           </ div>
         </div>
@@ -49,6 +57,9 @@ export default function Home() {
           <div id="NavBar-Container">
             <NavBar />
           </div>
+          <p style={{ color: 'red', fontSize: '20px', textAlign: 'center', marginTop: '50px' }}>
+            未ログイン状態の表示
+          </p>
         </div>
       )
       }

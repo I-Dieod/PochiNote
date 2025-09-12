@@ -3,11 +3,9 @@
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import { NextResponse } from "next/server";
 
 import { AuthActionProps } from "@/types";
-import { UserNameAtom, MailAtom, PasswordAtom, ConfirmPasswordAtom, ErrorMessageAtom } from "@/atoms/auth/singup.atom";
-import { isLogedInAtom, authTokenAtom } from "@/atoms/auth/login.atom";
+import { UserNameAtom, MailAtom, PasswordAtom, ConfirmPasswordAtom, ErrorMessageAtom, isLogedInAtom, authTokenAtom } from "@/atoms/auth/auth.atom";
 
 export default function SignupForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
     const [userName, setUserName] = useAtom(UserNameAtom);
@@ -28,6 +26,16 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
+    // 認証情報を保存
+    const saveAuthData = (token: string, userData: { userName: string, email: string }) => {
+        try {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userData", JSON.stringify(userData));
+        } catch (error) {
+            console.error("Failed to sace auth data:", error);
+        }
+    };
 
     //  Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
@@ -67,8 +75,28 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
             const loginData = await loginResponse.json();
             if (loginData.success && loginData.token) {
                 // 認証状態を設定
+                setUserName(loginData.user.userName);
+                setEMail(loginData.user.email);
                 setAuthToken(loginData.token);
                 setIsLogedIn(true);
+
+                // localStorageに保存
+                saveAuthData(
+                    loginData.token,
+                    {
+                        userName: loginData.user.userName,
+                        email: loginData.user.email
+                    }
+                );
+
+                console.log("Auto-login successful for:",
+                    {
+                        user: {
+                            userName: userName,
+                            email: email,
+                            token: authToken
+                        }
+                    });
 
                 console.log("Auto-login successful, redirecting...");
 

@@ -5,11 +5,10 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 import { AuthActionProps } from "@/types";
-import { MailAtom, PasswordAtom, ErrorMessageAtom } from "@/atoms/auth/singup.atom";
-import { authTokenAtom, isLogedInAtom } from "@/atoms/auth/login.atom";
-
+import { UserNameAtom, MailAtom, PasswordAtom, ErrorMessageAtom, authTokenAtom, isLogedInAtom } from "@/atoms/auth/auth.atom";
 
 export default function LoginForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
+    const [userName, setUserName] = useAtom(UserNameAtom);
     const [email, setEMail] = useAtom(MailAtom);
     const [password, setPassword] = useAtom(PasswordAtom);
     const [authToken, setAuthToken] = useAtom(authTokenAtom);
@@ -26,6 +25,15 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
         setIsMounted(true);
     }, []);
 
+    // 認証情報を保存する関数
+    const saveAuthData = (token: string, userData: { userName: string; email: string }) => {
+        try {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userData", JSON.stringify(userData));
+        } catch (error) {
+            console.error("Failed to save auth data:", error);
+        }
+    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Send request for", { email, password });
@@ -33,26 +41,34 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
 
         onSubmit(true);
         try {
-            const response = await fetch(action, {
+            const loginResponse = await fetch(action, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
 
-            if (!response.ok) {
+            if (!loginResponse.ok) {
                 // エラー処理
                 throw new Error("Request failed");
             }
 
-            const data = await response.json();
-            if (data.success) {
-                if (data.token) {
-                    setAuthToken(data.token);
+            const loginData = await loginResponse.json();
+            if (loginData.success) {
+                if (loginData.token) {
+                    setAuthToken(loginData.token);
                 }
+                setUserName(loginData.user.userName);
+                setEMail(loginData.user.email);
                 setIsLogedIn(true);
 
+                // localStorageに保存
+                saveAuthData(loginData.token, {
+                    userName: loginData.user.userName,
+                    email: loginData.user.email
+                });
+
                 if (onSuccess) {
-                    onSuccess(data);
+                    onSuccess(loginData);
                 } else {
                     alert("Login successful");
                 }

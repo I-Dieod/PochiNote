@@ -8,15 +8,16 @@ import { createUser, getUserByEmail } from "@/lib/models/userModel";
 export async function POST(req: NextRequest): Promise<NextResponse> {
     try {
         const { email, password, userName } = await req.json();
-        console.log("Received signup request:", { email, password, userName });
+        console.log("Received signup request:", { userName, email, password });
 
         // バリデーション
-        if (!email || !password || !userName) {
+        if (!userName || !email || !password) {
             return NextResponse.json(
                 { message: "All fields are required" },
                 { status: 400 }
             );
         }
+        // TODO: ユーザーネームのバリデーション追加
         if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
             return NextResponse.json(
                 { message: "Invalid email format" },
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             { status: 201 }
         );
     } catch (error) {
-        console.error("Error in register function:", error);
+        console.error("Error in signup function:", error);
 
         // サーバーエラー
         return NextResponse.json(
