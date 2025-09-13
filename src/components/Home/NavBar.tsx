@@ -7,8 +7,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAtom } from "jotai";
 
 import { DarkModeToggle } from '@/atoms/DarkMode.atom'
-import { userNameAtom } from '@/atoms/NavBar.atom';
-import { authTokenAtom, isLogedInAtom } from '@/atoms/auth/login.atom';
+import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
 
 const navigation = [
     { name: 'Dashboard', href: '#' },
@@ -18,18 +17,22 @@ const navigation = [
 ]
 
 export default function NavBar() {
-    const [userName, setUserName] = useAtom(userNameAtom);
+    const [userName, setUserName] = useAtom(UserNameAtom);
     const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
     const [authToken, setAuthToken] = useAtom(authTokenAtom);
 
     // ログアウト処理
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
         setIsLogedIn(false);
         setAuthToken("");
         setUserName("");
         // ログインページにリダイレクト
         if (typeof window !== "undefined") {
-            window.location.href = "/login";
+            window.location.href = "/";
         }
     };
 
@@ -74,7 +77,7 @@ export default function NavBar() {
                                         <a
                                             key={item.name}
                                             href={item.href}
-                                            className="text-black-100 hover:bg-white/5 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                            className="text-black-100 hover:bg-white/5 hover:text-gray-400 rounded-md px-3 py-2 text-sm font-medium"
                                         >
                                             {item.name}
                                         </a>
