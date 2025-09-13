@@ -5,24 +5,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
-import { showAddFormAtom, transactionsAtom } from "@/atoms/TransactionTable.atom";
+import { categoriesAtom, showAddFormAtom, transactionsAtom } from "@/atoms/TransactionTable.atom";
 import AddDataForm from "@/components/Home/SubComponents/AddDataForm";
 import { authTokenAtom, UserNameAtom } from "@/atoms/auth/auth.atom";
-
-interface Transaction {
-    transactionId: number;
-    transactionType: "income" | "expense";
-    amount: string;
-    categoryName: string;
-    description?: string;
-    transactionDate: string;
-}
+import { Transaction } from "@/types/index";
 
 export default function TransactionTable() {
     const [authToken, setAuthToken] = useAtom(authTokenAtom);
     const [userName, setUserName] = useAtom(UserNameAtom);
     const [showAddForm, setShowAddForm] = useAtom(showAddFormAtom);
     const [transactions, setTransactions] = useAtom(transactionsAtom);
+    const [categories, setCategories] = useAtom(categoriesAtom);
     const [submitted, setSubmitted] = useState(false);
 
     const [error, setError] = useState(null as string | null);
@@ -117,6 +110,13 @@ export default function TransactionTable() {
         return date.toLocaleDateString('ja-JP');
     };
 
+    const getCategoryName = (categoryId: number) => {
+        // income と expense の両方のカテゴリーから検索
+        const category = [...categories.income, ...categories.expense]
+            .find(cat => cat.categoryId === categoryId);
+        return category?.categoryName || '-';
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -173,7 +173,7 @@ export default function TransactionTable() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">{transaction.description || '-'}</td>
-                                    <td className="px-6 py-4">{transaction.categoryName}</td>
+                                    <td className="px-6 py-4">{getCategoryName(transaction.categoryId)}</td>
                                     <td className="px-6 py-4">
                                         {formatAmount(transaction.amount, transaction.transactionType)}
                                     </td>

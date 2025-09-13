@@ -21,7 +21,7 @@ export type DataActionProps = {
 }
 
 export interface Category {
-    categoryId: string;
+    categoryId: number;  // string から number に変更
     categoryName: string;
     categoryType: 'income' | 'expense';
     description?: string;
@@ -31,7 +31,7 @@ export interface Transaction {
     transactionId: number;
     transactionType: "income" | "expense";
     amount: string;
-    categoryName: string;
+    categoryId: number;
     description?: string;
     transactionDate: string;
 }

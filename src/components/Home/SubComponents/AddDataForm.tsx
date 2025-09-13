@@ -10,7 +10,7 @@ import { showAddFormAtom, categoriesAtom } from "@/atoms/TransactionTable.atom";
 interface TransactionData {
     transactionType: "income" | "expense";
     amount: string;
-    categoryId: string;
+    categoryId: number;  // string から number に変更
     description: string;
     transactionDate: string;
 }
@@ -30,7 +30,7 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
     const [formData, setFormData] = useState<TransactionData>({
         transactionType: "expense",
         amount: "",
-        categoryId: "",
+        categoryId: 0,  // 空の値として0を使用
         description: "",
         transactionDate: new Date().toISOString().split('T')[0]
     });
@@ -43,6 +43,8 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
                 if (response.ok) {
                     const fetchCategoriesData = await response.json();
                     setCategories(fetchCategoriesData);
+                    console.log("Fetching categories from API:", { fetchCategoriesData, categories });
+
                 }
             } catch (error) {
                 console.error('Failed to fetch categories:', error);
@@ -65,9 +67,9 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value,
+            [name]: name === 'categoryId' ? Number(value) : value,
             // 取引種別が変わったらカテゴリをリセット
-            ...(name === 'transactionType' ? { categoryId: '' } : {})
+            ...(name === 'transactionType' ? { categoryId: 0 } : {})
         }));
     };
 
@@ -83,7 +85,7 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
                 userName: userName,
                 transactionType: formData.transactionType,
                 amount: formData.amount,
-                categoryId: parseInt(formData.categoryId),
+                categoryId: formData.categoryId,  // すでにnumber型なのでparseInt不要
                 description: formData.description || null,
                 transactionDate: formData.transactionDate
             }
