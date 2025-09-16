@@ -55,6 +55,7 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
         fetchCategories();
     }, [setCategories]);
 
+    // モーダル外クリックで閉じる
     const handleBGClick = () => {
         setShowAddForm(false);
     }

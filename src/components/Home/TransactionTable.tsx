@@ -156,6 +156,7 @@ export default function TransactionTable() {
                                     取引データがありません。取引を追加してください。
                                 </td>
                             </tr>
+                            // TODO:日付降順に並べ替えてからマッピングする */
                             : transactions.map((transaction) => (
                                 <tr
                                     key={transaction.transactionId}
@@ -175,6 +176,7 @@ export default function TransactionTable() {
                                     <td className="px-6 py-4">{transaction.description || '-'}</td>
                                     <td className="px-6 py-4">{getCategoryName(transaction.categoryId)}</td>
                                     <td className="px-6 py-4">
+                                        { /* TODO:金額の右揃え   */}
                                         {formatAmount(transaction.amount, transaction.transactionType)}
                                     </td>
                                     <td className="px-6 py-4 text-right">
