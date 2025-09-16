@@ -23,16 +23,35 @@ export default function NavBar() {
 
     // ログアウト処理
     const handleLogout = async () => {
-        await fetch("/api/auth/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-        setIsLogedIn(false);
-        setAuthToken("");
-        setUserName("");
-        // ログインページにリダイレクト
-        if (typeof window !== "undefined") {
-            window.location.href = "/";
+        try {
+            // サーバーサイドのログアウト処理
+            const response = await fetch("/api/auth/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}` // トークンを送信
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+
+            // クライアントサイドのクリーンアップ
+            // localStorage/sessionStorageのクリア（もし使用している場合）
+            localStorage.removeItem('authToken');
+            sessionStorage.removeItem('authToken');
+
+            // Atomのリセット
+            setIsLogedIn(false);
+            setAuthToken("");
+            setUserName("");
+
+            // next/routerを使用したリダイレクト
+            window.location.href = "/";  // または認証が必要なページからログインページへ
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // エラー処理（必要に応じてユーザーに通知）
         }
     };
 

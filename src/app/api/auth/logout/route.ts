@@ -5,7 +5,7 @@ import { verifyAuthToken, invalidateToken } from "@/lib/middleware/authMiddlewar
 
 export async function POST(request: NextRequest) {
     try {
-        const authHeader = request.headers.get("authorization");
+        const authHeader = request.headers.get("Authorization");
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return NextResponse.json(
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const token = authHeader.substring(7);
+        const token = request.headers.get("Authorization")?.replace("Bearer ", "") || "";
 
         // トークンの検証
         const verificationResult = await verifyAuthToken(token);
