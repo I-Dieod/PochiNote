@@ -182,10 +182,10 @@ export function BalanceChart() {
     useEffect(() => {
         const fetchBalances = async () => {
             const data = await calcBalances(transactions);
-            setBalanceDataList(data);  // これだけで十分
+            setBalanceDataList(data);
         };
         fetchBalances();
-    }, [transactions]);
+    }, [transactions, selectedPeriod]); // selectedPeriodを依存配列に追加
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -229,6 +229,7 @@ export function BalanceChart() {
                         dataKey="balance"
                         tickFormatter={(value) => `¥${value.toLocaleString()}`}
                     />
+                    {/* TODO: Periodに応じてラインタイプを変える */}
                     <Line
                         type="monotone"
                         dataKey="balance"
