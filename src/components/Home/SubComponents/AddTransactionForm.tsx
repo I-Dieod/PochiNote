@@ -3,22 +3,16 @@
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
-import { DataActionProps } from "@/types";
+import { DataActionProps, Transaction } from "@/types";
 import { UserNameAtom, MailAtom, authTokenAtom } from "@/atoms/auth/auth.atom";
 import { showAddFormAtom, categoriesAtom } from "@/atoms/TransactionTable.atom";
 
-interface TransactionData {
-    transactionType: "income" | "expense";
-    amount: string;
-    categoryId: number;  // string から number に変更
-    description: string;
-    transactionDate: string;
-}
 
-export default function AddDataForm({ action, onSubmit, onSuccess, onError, onClose }: DataActionProps) {
-    const [userName, setUserName] = useAtom(UserNameAtom);
-    const [email, setEMail] = useAtom(MailAtom);
-    const [authToken, setAuthToken] = useAtom(authTokenAtom);
+
+export default function AddDataForm({ action, onSubmit, target, onSuccess, onError, onClose }: DataActionProps) {
+    const [userName] = useAtom(UserNameAtom);
+    const [email] = useAtom(MailAtom);
+    const [authToken] = useAtom(authTokenAtom);
     const [showAddForm, setShowAddForm] = useAtom(showAddFormAtom);
     const [categories, setCategories] = useAtom(categoriesAtom);
 
@@ -27,7 +21,8 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
     const [error, setError] = useState("");
 
     // フォームデータの状態管理
-    const [formData, setFormData] = useState<TransactionData>({
+    const [formData, setFormData] = useState<Transaction>({
+        transactionId: 0, // 仮の初期値（新規追加時は0やnullでもOK）
         transactionType: "expense",
         amount: "",
         categoryId: 0,  // 空の値として0を使用
@@ -36,22 +31,21 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
     });
 
     // APIからカテゴリを取得
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch("/api/data/fetchCategories");
-                if (response.ok) {
-                    const fetchCategoriesData = await response.json();
-                    setCategories(fetchCategoriesData);
-                    console.log("Fetching categories from API:", { fetchCategoriesData, categories });
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch("/api/data/fetchCategories");
+            if (response.ok) {
+                const fetchCategoriesData = await response.json();
+                setCategories(fetchCategoriesData);
+                console.log("Fetching categories from API:", { fetchCategoriesData, categories });
 
-                }
-            } catch (error) {
-                console.error('Failed to fetch categories:', error);
-                setError('カテゴリの取得に失敗しました');
             }
-        };
-
+        } catch (error) {
+            console.error('Failed to fetch categories:', error);
+            setError('カテゴリの取得に失敗しました');
+        }
+    };
+    useEffect(() => {
         fetchCategories();
     }, [setCategories]);
 
@@ -86,7 +80,7 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
                 userName: userName,
                 transactionType: formData.transactionType,
                 amount: formData.amount,
-                categoryId: formData.categoryId,  // すでにnumber型なのでparseInt不要
+                categoryId: formData.categoryId,
                 description: formData.description || null,
                 transactionDate: formData.transactionDate
             }
@@ -122,7 +116,7 @@ export default function AddDataForm({ action, onSubmit, onSuccess, onError, onCl
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div
