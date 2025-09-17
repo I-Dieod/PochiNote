@@ -1,3 +1,5 @@
+// src/app/api/data/edit/property/updateCurrentProperty/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/config/db/db";
 import { usersProperties } from "@/lib/config/db/schema/users";
