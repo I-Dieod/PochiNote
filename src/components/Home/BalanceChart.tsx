@@ -14,7 +14,6 @@ import {
     YAxis,
 } from 'recharts';
 
-import BalanceDataList from '@/lib/BalanceDataList';
 import { dropdownMenuAtom, dropdownOpenAtom, selectedPeriodAtom } from '@/atoms/BalanceChart.atom';
 import { transactionsAtom } from '@/atoms/TransactionTable.atom';
 import { authTokenAtom } from '@/atoms/auth/auth.atom';
@@ -183,7 +182,7 @@ export function BalanceChart() {
         const fetchBalances = async () => {
             const data = await calcBalances(transactions);
             setBalanceDataList(data);
-            BalanceDataList.splice(0, BalanceDataList.length, ...data);
+            balanceDataList.splice(0, balanceDataList.length, ...data);
         };
         fetchBalances();
     }, [transactions]);
@@ -204,7 +203,6 @@ export function BalanceChart() {
         return () => window.removeEventListener('resize', updateDimensions);
     }, []);
 
-    const handleEditTransaction = () => {}
 
     return (
         <div className="md:w-2/3 sm:w-1/3 rounded-md border-double border-4 border-gray-200">
