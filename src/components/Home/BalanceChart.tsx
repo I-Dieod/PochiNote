@@ -23,6 +23,7 @@ const DropdownMenu = () => {
     const [dropdownMenuItems] = useAtom(dropdownMenuAtom);
     const [selectedPeriod, setSelectedPeriod] = useAtom(selectedPeriodAtom);
 
+    // TODO: メニュー外クリックで閉じる処理を追加
     return (
         <div className="relative inline-block text-left">
             <button
@@ -153,7 +154,7 @@ export function BalanceChart() {
 
         // 最終残高をDBに保存
         try {
-            const response = await fetch('/api/data/editProperty/updateCurrentProperty', {
+            const response = await fetch('/api/data/update/currentProperty', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,8 +182,7 @@ export function BalanceChart() {
     useEffect(() => {
         const fetchBalances = async () => {
             const data = await calcBalances(transactions);
-            setBalanceDataList(data);
-            balanceDataList.splice(0, balanceDataList.length, ...data);
+            setBalanceDataList(data);  // これだけで十分
         };
         fetchBalances();
     }, [transactions]);
