@@ -5,19 +5,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
-import { categoriesAtom, showAddFormAtom, transactionsAtom } from "@/atoms/TransactionTable.atom";
-import AddDataForm from "@/components/Home/SubComponents/AddDataForm";
+import { categoriesAtom, showAddFormAtom, showEditFormAtom, targetTransactionAtom, transactionsAtom } from "@/atoms/TransactionTable.atom";
+import AddDataForm from "@/components/Home/SubComponents/AddTransactionForm";
 import { authTokenAtom, UserNameAtom } from "@/atoms/auth/auth.atom";
 import { Transaction } from "@/types/index";
+import EditTransactionForm from "./SubComponents/EditTransactionForm";
 
 export default function TransactionTable() {
-    const [authToken, setAuthToken] = useAtom(authTokenAtom);
-    const [userName, setUserName] = useAtom(UserNameAtom);
+    const [authToken] = useAtom(authTokenAtom);
+    const [userName] = useAtom(UserNameAtom);
     const [showAddForm, setShowAddForm] = useAtom(showAddFormAtom);
+    const [showEditForm, setShowEditForm] = useAtom(showEditFormAtom);
     const [transactions, setTransactions] = useAtom(transactionsAtom);
-    const [categories, setCategories] = useAtom(categoriesAtom);
-    const [submitted, setSubmitted] = useState(false);
+    const [categories] = useAtom(categoriesAtom);
+    const [targetTransaction, setTargetTransaction] = useAtom(targetTransactionAtom);
 
+    const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState(null as string | null);
     const [loading, setLoading] = useState(false);
 
@@ -117,9 +120,6 @@ export default function TransactionTable() {
         return category?.categoryName || '-';
     };
 
-        const handleEditTransaction = () => {}
-
-
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -160,7 +160,9 @@ export default function TransactionTable() {
                                 </td>
                             </tr>
                             // TODO:日付降順に並べ替えてからマッピングする */
-                            : transactions.map((transaction) => (
+                            : transactions.sort(
+                                (a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+                            ).map((transaction) => (
                                 <tr
                                     key={transaction.transactionId}
                                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -179,11 +181,22 @@ export default function TransactionTable() {
                                     <td className="px-6 py-4">{transaction.description || '-'}</td>
                                     <td className="px-6 py-4">{getCategoryName(transaction.categoryId)}</td>
                                     <td className="px-6 py-4">
-                                        { /* TODO:金額の右揃え   */}
-                                        {formatAmount(transaction.amount, transaction.transactionType)}
+                                        {/* TODO:金額の右揃え */}
+                                        <div className="text-right">
+                                            {formatAmount(transaction.amount, transaction.transactionType)}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">編集</a>
+                                        <a 
+                                        href="#" 
+                                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                        onClick={() => {
+                                            setShowEditForm(true);
+                                            setTargetTransaction(transaction);
+                                        }}
+                                        >
+                                            編集
+                                            </a>
                                     </td>
                                 </tr>
                             ))}
@@ -196,12 +209,28 @@ export default function TransactionTable() {
                 <AddDataForm
                     action="/api/data/add"
                     onSubmit={setSubmitted}
+                    target={null}
                     onSuccess={(newTransaction) => {
                         console.log('AddDataForm success callback:', newTransaction);
                         handleAddSuccess(newTransaction);
                     }}
                     onError={(error) => console.error("Data add error:", error)}
                     onClose={() => setShowAddForm(false)}
+                />
+            )}
+            {showEditForm && (
+                <EditTransactionForm
+                    action="/api/data/update/transactionData"
+                    onSubmit={setSubmitted}
+                    target={targetTransaction ?? null}
+                    onSuccess={(updatedTransaction) => {
+                        console.log('EditTransactionForm success callback:', updatedTransaction);
+                        // 編集成功時の処理をここに追加
+                        fetchTransactions(); // データを再取得して最新の状態を反映
+                        setShowEditForm(false);
+                    }}
+                    onError={(error) => console.error("Data edit error:", error)}
+                    onClose={() => setShowEditForm(false)}
                 />
             )}
         </>
