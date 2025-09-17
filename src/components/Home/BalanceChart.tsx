@@ -14,7 +14,6 @@ import {
     YAxis,
 } from 'recharts';
 
-import BalanceDataList from '@/lib/BalanceDataList';
 import { dropdownMenuAtom, dropdownOpenAtom, selectedPeriodAtom } from '@/atoms/BalanceChart.atom';
 import { transactionsAtom } from '@/atoms/TransactionTable.atom';
 import { authTokenAtom } from '@/atoms/auth/auth.atom';
@@ -24,6 +23,7 @@ const DropdownMenu = () => {
     const [dropdownMenuItems] = useAtom(dropdownMenuAtom);
     const [selectedPeriod, setSelectedPeriod] = useAtom(selectedPeriodAtom);
 
+    // TODO: メニュー外クリックで閉じる処理を追加
     return (
         <div className="relative inline-block text-left">
             <button
@@ -154,7 +154,7 @@ export function BalanceChart() {
 
         // 最終残高をDBに保存
         try {
-            const response = await fetch('/api/data/editProperty/updateCurrentProperty', {
+            const response = await fetch('/api/data/update/currentProperty', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -183,10 +183,9 @@ export function BalanceChart() {
         const fetchBalances = async () => {
             const data = await calcBalances(transactions);
             setBalanceDataList(data);
-            BalanceDataList.splice(0, BalanceDataList.length, ...data);
         };
         fetchBalances();
-    }, [transactions]);
+    }, [transactions, selectedPeriod]); // selectedPeriodを依存配列に追加
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -204,7 +203,6 @@ export function BalanceChart() {
         return () => window.removeEventListener('resize', updateDimensions);
     }, []);
 
-    const handleEditTransaction = () => {}
 
     return (
         <div className="md:w-2/3 sm:w-1/3 rounded-md border-double border-4 border-gray-200">
@@ -231,6 +229,7 @@ export function BalanceChart() {
                         dataKey="balance"
                         tickFormatter={(value) => `¥${value.toLocaleString()}`}
                     />
+                    {/* TODO: Periodに応じてラインタイプを変える */}
                     <Line
                         type="monotone"
                         dataKey="balance"

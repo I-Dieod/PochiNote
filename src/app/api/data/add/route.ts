@@ -3,9 +3,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { addData } from "@/lib/models/dataModel";
+import { verifyAuthToken } from "@/lib/middleware/authMiddleware";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
+        const token = request.headers.get("Authorization")?.replace("Bearer ", "") || "";
+                const authResult = await verifyAuthToken(token);
+                if (!authResult.valid || !authResult.user) {
+                    return NextResponse.json(
+                        { success: false, error: "Unauthorized" },
+                        { status: 401 });
+                }
+                
         const { userName, transactionType, amount, categoryId, description, transactionDate } = await request.json();
         console.log("Received add data request:", {
             userName,

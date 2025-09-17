@@ -1,6 +1,6 @@
 // src/lib/models/dataModel.ts
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { categories, transactions } from "@/lib/config/db/schema/transaction";
 import { db } from "@/lib/config/db/db";
@@ -29,6 +29,40 @@ export const addData = async (
     } catch (error) {
         console.error("Error in addData function:", error);
         throw new Error("Failed to add data");
+    }
+}
+
+export const updateData = async (
+    userName: string,
+    transactionId: number,
+    transactionType: "income" | "expense",
+    amount: string,
+    categoryId: number,
+    description: string | null,
+    transactionDate: string
+) => {
+    try {
+        const dateObj = new Date(transactionDate);
+        const result = await db.update(transactions)
+            .set({
+                transactionType: transactionType,
+                amount: amount,
+                categoryId: categoryId,
+                description: description,
+                transactionDate: dateObj
+            })
+            .where(
+                and(
+                    eq(transactions.transactionId, transactionId),
+                    eq(transactions.userName, userName)
+                )
+            ).returning();
+
+        return result[0];
+
+    } catch (error) {
+        console.error("Error in updateData function:", error);
+        throw new Error("Failed to update data");
     }
 }
 

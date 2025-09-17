@@ -5,7 +5,9 @@ import { atom } from "jotai";
 import { Category, Transaction } from "@/types/index"
 
 export const showAddFormAtom = atom<boolean>(false);
+export const showEditFormAtom = atom<boolean>(false);
 export const transactionsAtom = atom<Transaction[]>([]);
+export const targetTransactionAtom = atom<Transaction>();
 
 export const categoriesAtom = atom<{
     income: Category[];
