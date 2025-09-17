@@ -13,7 +13,8 @@ export type AuthActionProps = {
 }
 
 export type DataActionProps = {
-    action: "/api/data/add" | "/api/data/fetch";
+    action: "/api/data/add" | "/api/data/fetch" | "/api/data/edit/transaction";
+    target: Transaction | null;
     onSubmit: React.Dispatch<React.SetStateAction<boolean>>;
     onSuccess: (data: any) => void;
     onError: (error: any) => void;
