@@ -7,8 +7,6 @@ import { DataActionProps, Transaction } from "@/types";
 import { UserNameAtom, MailAtom, authTokenAtom } from "@/atoms/auth/auth.atom";
 import { showAddFormAtom, categoriesAtom } from "@/atoms/TransactionTable.atom";
 
-
-
 export default function AddDataForm({ action, onSubmit, target, onSuccess, onError, onClose }: DataActionProps) {
     const [userName] = useAtom(UserNameAtom);
     const [email] = useAtom(MailAtom);
@@ -23,7 +21,7 @@ export default function AddDataForm({ action, onSubmit, target, onSuccess, onErr
     // フォームデータの状態管理
     const [formData, setFormData] = useState<Transaction>({
         transactionId: 0, // 仮の初期値（新規追加時は0やnullでもOK）
-        transactionType: "expense",
+        transactionType: "income",
         amount: "",
         categoryId: 0,  // 空の値として0を使用
         description: "",
@@ -164,8 +162,8 @@ export default function AddDataForm({ action, onSubmit, target, onSuccess, onErr
                             required
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                         >
-                            <option value="expense">支出</option>
                             <option value="income">収入</option>
+                            <option value="expense">支出</option>
                         </select>
                     </div>
 
