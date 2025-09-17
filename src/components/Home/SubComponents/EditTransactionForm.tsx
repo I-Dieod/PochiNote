@@ -47,7 +47,7 @@ export default function EditTransactionForm({ action, onSubmit, target, onSucces
             }
         };
     
-    const getTargetTransactionData = async (transactionId: number) => {
+    const getTargetTransactionData = async () => {
         if (target === null) return;
         try {
             setFormData({
@@ -66,7 +66,7 @@ export default function EditTransactionForm({ action, onSubmit, target, onSucces
 
     useEffect(() => {
         if (target) {
-            getTargetTransactionData(target.transactionId);
+            getTargetTransactionData();
         }
         fetchCategories();
     }, [target]);
