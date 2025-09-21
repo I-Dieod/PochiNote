@@ -40,7 +40,6 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
     //  Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Send request for", { userName, email, password, confirmPassword });
         setIsLoading(true); // ローディング開始
         onSubmit(true);
 

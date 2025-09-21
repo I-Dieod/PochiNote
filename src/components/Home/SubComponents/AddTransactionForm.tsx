@@ -68,7 +68,6 @@ export default function AddDataForm({ action, onSubmit, target, onSuccess, onErr
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Send request to adding data for", { userName, email, authToken })
         setIsLoading(true);
         setError("");
         onSubmit(true);

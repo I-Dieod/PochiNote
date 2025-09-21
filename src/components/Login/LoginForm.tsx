@@ -36,7 +36,6 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
     };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Send request for", { email, password });
         setIsLoading(true); // ローディング開始
 
         onSubmit(true);

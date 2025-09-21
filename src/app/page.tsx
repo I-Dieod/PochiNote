@@ -22,8 +22,6 @@ export default function Home() {
     console.log("Page rendered with isLogedIn:", isLogedIn);
   }, [isLogedIn]);
 
-  console.log("Home component rendering, isLogedIn:", isLogedIn);
-
   // モーダル外クリックで閉じる
   const handleBGClick = () => {
     setDropdownOpen(false);
