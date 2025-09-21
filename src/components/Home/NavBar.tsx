@@ -6,7 +6,6 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAtom } from "jotai";
 
-import { DarkModeToggle } from '@/atoms/DarkMode.atom'
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
 
 const navigation = [
@@ -105,7 +104,6 @@ export default function NavBar() {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-left pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <DarkModeToggle />
                             {/* Notification Button */}
                             {/* ログイン時のみ通知ボタンを表示 */}
                             {isLogedIn && (
@@ -163,6 +161,7 @@ export default function NavBar() {
                                     </MenuItems>
                                 ) : (
                                     /* 未ログインユーザーメニュー */
+                                    /* TODO: 未ログインなら「Try for free」のボタンでサインアップにリダイレクトする */
                                     <MenuItems
                                         transition
                                         className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[enter]:ease-out data-[leave]:duration-75 data-[leave]:ease-in"
