@@ -1,18 +1,21 @@
 // src/app/page.tsx
 
+// TODO: releaseブランチのコンソールログは全て削除すること
 "use client";
 
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 
-import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { BalanceChart } from "@/components/Home/BalanceChart";
 import { CircleChart } from "@/components/Home/CircleChart";
 import NavBar from "@/components/Home/NavBar";
 import NoteTable from "@/components/Home/TransactionTable";
+import { isLogedInAtom } from "@/atoms/auth/auth.atom";
+import { dropdownOpenAtom } from "@/atoms/BalanceChart.atom";
 
 export default function Home() {
   const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
+  const [dropdownOpen, setDropdownOpen] = useAtom(dropdownOpenAtom);
 
   // デバッグ用ログ
   useEffect(() => {
@@ -21,10 +24,18 @@ export default function Home() {
 
   console.log("Home component rendering, isLogedIn:", isLogedIn);
 
+  // モーダル外クリックで閉じる
+  const handleBGClick = () => {
+    setDropdownOpen(false);
+  }
   return (
     <>
       {isLogedIn ? (
-        <div id="Screen" className="gap-4 min-h-screen items-center justify-center">
+        <div
+          id="Screen"
+          className="gap-4 min-h-screen items-center justify-center"
+          onClick={handleBGClick}
+        >
           <div id="NavBar-Container">
             <NavBar />
           </div>
