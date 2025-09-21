@@ -5,6 +5,20 @@ export interface BalanceDataType {
     balance: number;
 }
 
+export type PieSectorData = {
+    cx?: number;
+    cy?: number;
+    midAngle?: number;
+    innerRadius?: number;
+    outerRadius?: number;
+    startAngle?: number;
+    endAngle?: number;
+    fill?: string;
+    payload?: any;
+    percent?: number;
+    value?: number;
+}
+
 export type AuthActionProps = {
     action: "/api/auth/signup" | "/api/auth/login";
     onSubmit: React.Dispatch<React.SetStateAction<boolean>>;
