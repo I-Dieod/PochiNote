@@ -182,6 +182,7 @@ export function BalanceChart() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="date"
+                        angle={-30}
                         tickFormatter={(date) => new Date(date).toLocaleDateString('ja-JP')}
                         domain={[startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]}
                     />
