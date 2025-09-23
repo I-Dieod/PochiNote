@@ -6,10 +6,12 @@
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 
-import { BalanceChart } from "@/components/Home/BalanceChart";
-import { CircleChart } from "@/components/Home/CircleChart";
+import SideBar from "@/components/Home/SideBar";
 import NavBar from "@/components/Home/NavBar";
 import NoteTable from "@/components/Home/TransactionTable";
+import { BalanceChart } from "@/components/Home/BalanceChart";
+import { CircleChart } from "@/components/Home/CircleChart";
+
 import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { dropdownOpenAtom } from "@/atoms/BalanceChart.atom";
 
@@ -34,16 +36,20 @@ export default function Home() {
           className="gap-4 min-h-screen items-center justify-center"
           onClick={handleBGClick}
         >
-          <div id="NavBar-Container">
-            <NavBar />
+          <div id="Main-container" className="flex">
+            <div id="SideBar-Container">
+              <SideBar />
+            </div>
+            <div id="Content-Container" className="flex-1 flex flex-col min-h-screen ml-64 bg-slate-100">
+              <div id="Chart-Containers" className="flex flex-col md:flex-row h-150 gap-4 p-4 dark:bg-gray-900">
+                <BalanceChart />
+                <CircleChart />
+              </div>
+              <div id="Table-Container" className="w-full p-4">
+                <NoteTable />
+              </ div>
+            </div>
           </div>
-          <div id="Chart-Containers" className="flex flex-col md:flex-row h-150 gap-4 p-4 dark:bg-gray-900">
-            <BalanceChart />
-            <CircleChart />
-          </div>
-          <div id="Table-Container" className="w-full p-4">
-            <NoteTable />
-          </ div>
         </div>
       ) : (
         <div className="min-h-screen w-full bg-[#f9fafb] relative">
@@ -69,6 +75,45 @@ export default function Home() {
           <p style={{ color: 'red', fontSize: '20px', textAlign: 'center', marginTop: '50px' }}>
             未ログイン状態の表示
           </p>
+          <div id="Main-Container" className="flex flex-col items-center justify-top h-screen relative z-10 px-4">
+            <div id="catch-phrase" className="h-20 mb-4 flex items-center justify-center">
+              <h1 className="text-6xl md:text-5xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-gradient-to-r from-indigo-600 to-fuchsia-500 bg-clip-text text-transparent">
+                Be smart, Be steady.
+              </h1>
+            </div>
+            <div id="description-container" className="mb-8 w-full text-center text-gray-600 p-6">
+              <p className="text-lg md:text-xl ">
+                <strong>PochiNote</strong>は、あなたの資産管理をシンプルかつ効果的にサポートするためのモダンアプリケーションです。<br />
+                収支の可視化、目標設定、そして賢いお金の使い方を提案します。<br />
+              </p>
+            </div>
+            <div id="feature-cards" className="flex flex-col gap-6 mb-8 w-full max-w-6xl">
+              {/* Feature Card 1 */}
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">収支の可視化</h2>
+                <p className="text-gray-600">
+                  直感的なチャートとグラフで、あなたの収入と支出を一目で把握できます。<br />
+                  日々の取引を簡単に記録し、財務状況をリアルタイムで確認しましょう。
+                </p>
+              </div>
+              {/* Feature Card 2 */}
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">目標設定と追跡</h2>
+                <p className="text-gray-600">
+                  貯蓄目標や支出制限を設定し、進捗を追跡します。<br />
+                  目標達成に向けたアドバイスとリマインダーで、モチベーションを維持しましょう。
+                </p>
+              </div>
+              {/* Feature Card 3 */}
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">賢いお金の使い方</h2>
+                <p className="text-gray-600">
+                  あなたの支出パターンを分析し、節約のヒントや投資の機会を提案します。<br />
+                  賢い財務管理で、将来の安心を手に入れましょう。
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )
       }

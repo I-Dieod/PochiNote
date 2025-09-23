@@ -160,23 +160,29 @@ export function BalanceChart() {
     }, []);
 
     return (
-        <div className="md:w-2/3 sm:w-1/3 rounded-md border-double border-4 border-gray-200">
-            <DropdownMenu />
+        <div className="md:w-2/3 sm:w-1/3 shadow-lg sm:rounded-lg z-10 bg-white dark:bg-gray-800 p-2">
+            <div id="chart-header" className="flex justify-between items-center border-dashed border-2 border-gray-200 rounded-t-lg ">
+                <h1 className="text-center font-bold p-4">資産推移</h1>
+                <div className="justify-end p-2 ">
+                    <DropdownMenu />
+                </div>
+            </div>
             <div ref={containerRef} className="container md:h-full md:w-full overflow-x-auto">
                 <LineChart
                     width={chartWidth || 0}
                     height={500}
                     data={balanceDataList}
                     margin={{
-                        top: 5,
-                        right: 5,
-                        left: 5,
-                        bottom: 5,
+                        top: 15,
+                        right: 30,
+                        left: 30,
+                        bottom: 15,
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="date"
+                        angle={-30}
                         tickFormatter={(date) => new Date(date).toLocaleDateString('ja-JP')}
                         domain={[startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]}
                     />
@@ -188,13 +194,20 @@ export function BalanceChart() {
                     <Line
                         type="monotone"
                         dataKey="balance"
-                        stroke="#4bf3c1ff"
+                        stroke="#37b18cff"
                         strokeWidth={2}
+                        dot={false}           // 通常時のポイントを非表示
+                        activeDot={{          // ホバー時のポイントをカスタマイズ
+                            r: 6,
+                            stroke: "#37b18cff",
+                            strokeWidth: 2,
+                            fill: "white"
+                        }}
                     />
-                    <Legend />
                     <Tooltip
-                        formatter={(value) => [`¥${Number(value).toLocaleString()}`, '残高']}
+                        formatter={(value) => [`¥${Number(value).toLocaleString()}`, '資産額']}
                         labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                        cursor={{ stroke: '#37b18cff', strokeDasharray: '3 3' }}  // ホバー時の縦線をカスタマイズ
                     />
                 </LineChart>
             </div>

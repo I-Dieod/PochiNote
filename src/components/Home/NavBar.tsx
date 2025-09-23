@@ -5,8 +5,8 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAtom } from "jotai";
+import { ChevronsRight } from 'lucide-react';
 
-import { DarkModeToggle } from '@/atoms/DarkMode.atom'
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
 
 const navigation = [
@@ -105,7 +105,6 @@ export default function NavBar() {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-left pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <DarkModeToggle />
                             {/* Notification Button */}
                             {/* ログイン時のみ通知ボタンを表示 */}
                             {isLogedIn && (
@@ -120,18 +119,18 @@ export default function NavBar() {
                             )}
 
                             {/* Profile dropdown */}
-                            <Menu as="div" className="relative ml-3">
-                                <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">Open user menu</span>
-                                    <img
-                                        alt=""
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                        className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                                    />
-                                </MenuButton>
-                                {isLogedIn ? (
-                                    /* ログイン済みユーザーメニュー */
+                            {isLogedIn ? (
+                                /* ログイン済みユーザーメニュー */
+                                <Menu as="div" className="relative ml-3">
+                                    <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                        <span className="absolute -inset-1.5" />
+                                        <span className="sr-only">Open user menu</span>
+                                        <img
+                                            alt=""
+                                            src="/default_user_icon.svg" // パスから 'public' を削除
+                                            className="size-11 rounded-full"
+                                        />
+                                    </MenuButton>
                                     <MenuItems
                                         transition
                                         className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[enter]:ease-out data-[leave]:duration-75 data-[leave]:ease-in"
@@ -161,31 +160,23 @@ export default function NavBar() {
                                             </button>
                                         </MenuItem>
                                     </MenuItems>
-                                ) : (
-                                    /* 未ログインユーザーメニュー */
-                                    <MenuItems
-                                        transition
-                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[enter]:ease-out data-[leave]:duration-75 data-[leave]:ease-in"
+                                </Menu>
+                            ) : (
+                                /* 未ログインユーザーメニュー */
+                                <>
+                                    <div
+                                        className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-fuchsia-500 rounded-md h-10 w-20"
                                     >
-                                        <MenuItem>
-                                            <a
-                                                href="/login"
-                                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none hover:bg-gray-50"
-                                            >
-                                                Sign In
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem>
-                                            <a
-                                                href="/signup"
-                                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none hover:bg-gray-50"
-                                            >
-                                                Sign Up
-                                            </a>
-                                        </MenuItem>
-                                    </MenuItems>
-                                )}
-                            </Menu>
+
+                                        <a
+                                            href="/signup"
+                                            className="block w-full text-center px-4 py-2 text-sm font-medium text-white">
+                                            Try for free
+                                        </a>
+                                        <ChevronsRight color="white" size={32} />
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
