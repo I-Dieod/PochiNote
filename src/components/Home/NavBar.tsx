@@ -5,6 +5,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAtom } from "jotai";
+import { ChevronsRight } from 'lucide-react';
 
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
 
@@ -163,16 +164,16 @@ export default function NavBar() {
                             ) : (
                                 /* 未ログインユーザーメニュー */
                                 <>
-                                    <div 
-                                    className="flex items-center justify-between block w-full text-center px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-fuchsia-500 rounded-md h-10 w-25"
+                                    <div
+                                        className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-fuchsia-500 rounded-md h-10 w-20"
                                     >
-                                    
+
                                         <a
                                             href="/signup"
                                             className="block w-full text-center px-4 py-2 text-sm font-medium text-white">
                                             Try for free
                                         </a>
-                                        <img src="/play_arrow_filled_white.svg" alt="arrow" height={30} width={30}/>
+                                        <ChevronsRight color="white" size={32} />
                                     </div>
                                 </>
                             )}
