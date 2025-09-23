@@ -125,7 +125,7 @@ export default function TransactionTable() {
 
     return (
         <>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg bg-white dark:bg-gray-800">
                 <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800">
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">取引履歴</h2>
                     <button

@@ -139,7 +139,7 @@ export const CircleChart = () => {
     };
 
     return (
-        <div className="md:w-1/3 shadow-lg sm:rounded-lg">
+        <div className="md:w-1/3 shadow-lg sm:rounded-lg z-10 bg-white dark:bg-gray-800 p-2">
             <h1 className="text-center font-bold p-2">収支グラフ</h1>
             <ResponsiveContainer width="100%" height={400}>
                 <PieChart>

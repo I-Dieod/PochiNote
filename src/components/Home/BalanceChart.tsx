@@ -160,7 +160,7 @@ export function BalanceChart() {
     }, []);
 
     return (
-        <div className="md:w-2/3 sm:w-1/3 shadow-lg sm:rounded-lg">
+        <div className="md:w-2/3 sm:w-1/3 shadow-lg sm:rounded-lg z-10 bg-white dark:bg-gray-800 p-2">
             <div id="chart-header" className="flex justify-between items-center border-dashed border-2 border-gray-200 rounded-t-lg ">
                 <h1 className="text-center font-bold p-4">資産推移</h1>
                 <div className="justify-end p-2 ">
