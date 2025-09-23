@@ -46,33 +46,8 @@ export const initCategories = async () => {
     }
 };
 
-export const initTestUsers = async () => {
-    const testUsers = [
-        { userName: 'testuser1', email: 'testuser1@example.com', password: await bcrypt.hash('password123', 10) },
-        { userName: 'testuser2', email: 'testuser2@example.com', password: await bcrypt.hash('password123', 10) },
-        { userName: 'testuser3', email: 'testuser3@example.com', password: await bcrypt.hash('password123', 10) },
-    ];
-    
-    try {
-        const existingUsers = await db.select().from(users).limit(1);
-        if (existingUsers.length > 0) {
-            console.log('Users already exist, skipping seed...');
-            return;
-        }
-
-        for (const user of testUsers) {
-            await db.insert(users).values(user);
-        }
-        console.log('Test users seeded successfully!');
-    } catch (error) {
-        console.error('Error seeding test users:', error);
-        throw error;
-    }
-}
-
 if (require.main === module) {
     initCategories()
-        .then(() => initTestUsers())
         .then(() => process.exit(0))
         .catch((error) => {
             console.error(error);
