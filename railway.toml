@@ -1,0 +1,13 @@
+[build]
+builder = "RAILPACK"
+buildCommand = "npm run build"
+
+[deploy]
+startCommand = "chmod +x scripts/railway-start.sh && ./scripts/railway-start.sh"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+
+[variables]
+PORT = "8080"
+NODE_ENV = "production"
