@@ -2,7 +2,7 @@ import type { Config } from "drizzle-kit";
 import 'dotenv/config';
 
 // 環境変数の確認とログ出力
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = "postgresql://postgres:EpthtJSRkXtdHkwMBVlXJkdIukqaVXMV@shinkansen.proxy.rlwy.net:46288/railway";
 console.log("DATABASE_URL exists:", !!databaseUrl);
 if (!databaseUrl) {
     throw new Error("DATABASE_URL environment variable is required");
