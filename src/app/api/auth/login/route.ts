@@ -54,7 +54,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         console.log("User Login successfully:", { user });
 
-        // 既存のセッションがあれば無効化
         // 成功レスポンス
         // トークン生成
         const jwtSecret = process.env.JWT_SECRET
