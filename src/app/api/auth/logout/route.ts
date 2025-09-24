@@ -1,7 +1,7 @@
 // src/app/api/auth/logout/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAuthToken, invalidateToken } from "@/lib/middleware/authMiddleware";
+import { verifyAuthToken } from "@/lib/middleware/authMiddleware";
 
 export async function POST(request: NextRequest) {
     try {
@@ -22,24 +22,11 @@ export async function POST(request: NextRequest) {
         if (!verificationResult.valid) {
             return NextResponse.json(
                 {
-                    success: false,
+                    success: true,
                     error: verificationResult.error || "Invalid token"
                 },
                 { status: 401 }
             );
-        }
-
-        // Redisからトークンを削除
-        const userName = verificationResult.user?.userName;
-        if (userName) {
-            const invalidated = await invalidateToken(userName);
-
-            if (!invalidated) {
-                return NextResponse.json(
-                    { success: false, error: "Failed to invalidate session" },
-                    { status: 500 }
-                );
-            }
         }
 
         return NextResponse.json({

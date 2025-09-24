@@ -2,13 +2,9 @@
 
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
-import { SignJWT } from 'jose';
-import { randomUUID } from "crypto";
-
 
 import { getUserByEmail } from "@/lib/models/userModel";
-import { redisClient } from "@/lib/config/redisClient";
-import { invalidateToken } from "@/lib/middleware/authMiddleware";
+import { createJWTToken } from "@/lib/middleware/authMiddleware";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
@@ -56,54 +52,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         console.log("User Login successfully:", { user });
 
-        // 既存のセッションがあれば無効化
-        await invalidateToken(user.userName);
         // 成功レスポンス
         // トークン生成
-        const jwtSecret = process.env.JWT_SECRET
-        if (!jwtSecret) {
-            console.error("JWT_SECRET is not defined");
-            return NextResponse.json(
-                { error: "Server configuration error" },
-                { status: 500 }
-            );
-        }
         let token: string;
-        const userName = user.userName
-        const jti = randomUUID(); // JWT ID（ランダム性を追加）
-        const iat = Math.floor(Date.now() / 1000); // issued at time
-        const exp = iat + 3600; // 1時間後
-        // TODO: トークン発行アルゴリズムにランダム性を持たせる
         try {
-            token = await new SignJWT({ 
-                userName,
-                jti,
-                iat,
-                // 必要に応じて他のクレームも追加
-                email: user.email,
-                userId: user.tableId
-            })
-                .setProtectedHeader({ alg: 'HS256' })
-                .setExpirationTime(exp)
-                .setIssuedAt(iat)
-                .setJti(jti) // JWT ID
-                .sign(new TextEncoder().encode(jwtSecret));
+            token = await createJWTToken(user);
         } catch (error) {
             console.error("Error generating JWT:", error);
             return NextResponse.json(
                 { error: "Failed to generate token" },
-                { status: 500 }
-            );
-        }
-        
-        // トークン保存
-        try {
-            await redisClient.set(`user:${user.userName}`, token, { EX: 3600 }); // TODO:セッションちゃんと切れるか確認
-            console.log(`Saved JWT in redis: user: ${user.userName} -> ${token}`)
-        } catch (error) {
-            console.error("Failed to save JWT for redis");
-            return NextResponse.json(
-                { error: "Failed to save token" },
                 { status: 500 }
             );
         }

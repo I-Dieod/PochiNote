@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { ChevronsRight } from 'lucide-react';
 
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
+import { deleteAuthToken } from '@/lib/middleware/authMiddleware';
 
 const navigation = [
     { name: 'Dashboard', href: '#' },
@@ -39,8 +40,7 @@ export default function NavBar() {
 
             // クライアントサイドのクリーンアップ
             // localStorage/sessionStorageのクリア（もし使用している場合）
-            localStorage.removeItem('authToken');
-            sessionStorage.removeItem('authToken');
+            deleteAuthToken();
 
             // Atomのリセット
             setIsLogedIn(false);
@@ -57,18 +57,6 @@ export default function NavBar() {
 
     return (
         <div className="w-full relative">
-            {/* ログイン時のみ背景のグロー効果を表示 */}
-            {isLogedIn && (
-                <div
-                    className="absolute inset-0 z-0"
-                    style={{
-                        backgroundImage: `
-                            radial-gradient(125% 125% at 50% 90%, #ffffff 50%, #14b8a6 100%)
-                        `,
-                        backgroundSize: "100% 100%",
-                    }}
-                />
-            )}
             <Disclosure as="nav" className="relative rounded-md border-none">
                 <div className="md:w-full dark:bg-gray-800 px-2 sm:px-6 lg:px-8">
                     <div className="relative flex h-16 items-center justify-between">
@@ -85,9 +73,9 @@ export default function NavBar() {
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex shrink-0 items-center">
                                 <img
-                                    alt="Your Company"
-                                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                                    className="h-8 w-auto"
+                                    alt="PochiNote Logo"
+                                    src="/Logo.svg"
+                                    className="h-10 w-10"
                                 />
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
@@ -105,78 +93,17 @@ export default function NavBar() {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-left pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {/* Notification Button */}
-                            {/* ログイン時のみ通知ボタンを表示 */}
-                            {isLogedIn && (
-                                <button
-                                    type="button"
-                                    className="relative rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500 transition-colors duration-200"
-                                >
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">View notifications</span>
-                                    <BellIcon aria-hidden="true" className="size-6" />
-                                </button>
-                            )}
 
-                            {/* Profile dropdown */}
-                            {isLogedIn ? (
-                                /* ログイン済みユーザーメニュー */
-                                <Menu as="div" className="relative ml-3">
-                                    <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                                        <span className="absolute -inset-1.5" />
-                                        <span className="sr-only">Open user menu</span>
-                                        <img
-                                            alt=""
-                                            src="/default_user_icon.svg" // パスから 'public' を削除
-                                            className="size-11 rounded-full"
-                                        />
-                                    </MenuButton>
-                                    <MenuItems
-                                        transition
-                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[enter]:ease-out data-[leave]:duration-75 data-[leave]:ease-in"
-                                    >
-                                        <MenuItem>
-                                            <a
-                                                href="/profile"
-                                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none hover:bg-gray-50"
-                                            >
-                                                Your Profile
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem>
-                                            <a
-                                                href="/settings"
-                                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none hover:bg-gray-50"
-                                            >
-                                                Settings
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem>
-                                            <button
-                                                onClick={handleLogout}
-                                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none hover:bg-gray-50"
-                                            >
-                                                Sign Out
-                                            </button>
-                                        </MenuItem>
-                                    </MenuItems>
-                                </Menu>
-                            ) : (
-                                /* 未ログインユーザーメニュー */
-                                <>
-                                    <div
-                                        className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-fuchsia-500 rounded-md h-10 w-20"
-                                    >
-
-                                        <a
-                                            href="/signup"
-                                            className="block w-full text-center px-4 py-2 text-sm font-medium text-white">
-                                            Try for free
-                                        </a>
-                                        <ChevronsRight color="white" size={32} />
-                                    </div>
-                                </>
-                            )}
+                            <div
+                                className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-indigo-400 rounded-md h-10 w-20"
+                            >
+                                <a
+                                    href="/signup"
+                                    className="block w-full text-center px-4 py-2 text-sm font-medium text-white">
+                                    Try for free
+                                </a>
+                                <ChevronsRight color="white" size={32} />
+                            </div>
                         </div>
                     </div>
                 </div>
