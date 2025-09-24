@@ -8,7 +8,6 @@ import { useAtom } from "jotai";
 import { DataActionProps, Transaction } from "@/types";
 import { categoriesAtom, showEditFormAtom } from "@/atoms/TransactionTable.atom";
 import { authTokenAtom, MailAtom, UserNameAtom } from "@/atoms/auth/auth.atom";
-import { trace } from "console";
 
 export default function EditTransactionForm({ action, onSubmit, target, onSuccess, onError, onClose }: DataActionProps) {
     const [userName] = useAtom(UserNameAtom);

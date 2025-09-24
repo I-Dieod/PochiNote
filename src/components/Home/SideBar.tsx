@@ -7,7 +7,7 @@ export default function SideBar() {
         <>
             <div id="Main-Container" className="hidden h-full lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
                 <div id="header" className="flex justify-items-start h-16 px-4 pt-2 bg-white dark:bg-gray-900">
-                    <img src="/logo.svg" alt="Logo" className="h-10 w-10 mx-2 my-2" />
+                    <img src="/Logo.svg" alt="Logo" className="h-10 w-10 mx-2 my-2" />
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white my-3">PochiNote</h2>
                 </div>
                 <div id="Menu-box" className="flex flex-col gap-2 m-2">

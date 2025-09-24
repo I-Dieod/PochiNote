@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 
 import { DropdownMenu } from './SubComponents/DropDownMenu';
-import { dropdownMenuAtom, dropdownOpenAtom, selectedPeriodAtom } from '@/atoms/BalanceChart.atom';
+import { selectedPeriodAtom } from '@/atoms/BalanceChart.atom';
 import { transactionsAtom } from '@/atoms/TransactionTable.atom';
 import { authTokenAtom } from '@/atoms/auth/auth.atom';
 
