@@ -3,8 +3,8 @@
 echo "🚀 Starting Railway deployment process..."
 
 # 環境変数の確認
-if [ -z "$DATABASE_URL" ]; then
-    echo "❌ DATABASE_URL is not set"
+if [ -z "$DATABASE_PUBLIC_URL" ]; then
+    echo "❌ DATABASE_PUBLIC_URL is not set"
     exit 1
 fi
 

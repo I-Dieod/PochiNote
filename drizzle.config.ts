@@ -1,4 +1,4 @@
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
 // 環境変数の確認とログ出力
 const databaseUrl = process.env.PUBLIC_DATABASE_URL;
@@ -7,7 +7,7 @@ if (!databaseUrl) {
     throw new Error("PUBLIC_DATABASE_URL environment variable is required");
 }
 
-export default {
+export default defineConfig({
     schema: "./src/lib/config/db/schema/*.ts",
     out: "./drizzle",
     dialect: "postgresql",
@@ -16,4 +16,4 @@ export default {
     },
     verbose: true,
     strict: true,
-} satisfies Config;
+});
