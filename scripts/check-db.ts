@@ -6,6 +6,7 @@ async function checkDatabase() {
     try {
         console.log('🔍 Checking database connection...');
         console.log('DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50) + '...');
+        console.log("Process env:", process.env);
         
         // 基本的な接続テスト
         const result = await db.execute('SELECT version()');

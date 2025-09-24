@@ -3,8 +3,10 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
+const connectionString = process.env.PUBLIC_DATABASE_URL;
+
 const pool = new Pool({
-    connectionString: "postgresql://postgres:EpthtJSRkXtdHkwMBVlXJkdIukqaVXMV@shinkansen.proxy.rlwy.net:46288/railway",
+    connectionString: connectionString,
 });
 
 export const db = drizzle(pool);
