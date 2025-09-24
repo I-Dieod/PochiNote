@@ -7,8 +7,6 @@ import { randomUUID } from "crypto";
 
 
 import { getUserByEmail } from "@/lib/models/userModel";
-import { redisClient } from "@/lib/config/redisClient";
-import { invalidateToken } from "@/lib/middleware/authMiddleware";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
@@ -57,11 +55,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         console.log("User Login successfully:", { user });
 
         // 既存のセッションがあれば無効化
-        await invalidateToken(user.userName);
         // 成功レスポンス
         // トークン生成
         const jwtSecret = process.env.JWT_SECRET
-        if (!jwtSecret) {
+        if (!jwtSecret) {  
             console.error("JWT_SECRET is not defined");
             return NextResponse.json(
                 { error: "Server configuration error" },
@@ -92,18 +89,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             console.error("Error generating JWT:", error);
             return NextResponse.json(
                 { error: "Failed to generate token" },
-                { status: 500 }
-            );
-        }
-        
-        // トークン保存
-        try {
-            await redisClient.set(`user:${user.userName}`, token, { EX: 3600 }); // TODO:セッションちゃんと切れるか確認
-            console.log(`Saved JWT in redis: user: ${user.userName} -> ${token}`)
-        } catch (error) {
-            console.error("Failed to save JWT for redis");
-            return NextResponse.json(
-                { error: "Failed to save token" },
                 { status: 500 }
             );
         }

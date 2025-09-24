@@ -2,8 +2,6 @@
 
 import { jwtVerify, JWTPayload } from "jose";
 
-import { redisClient } from "@/lib/config/redisClient";
-
 interface JWTUser extends JWTPayload {
     userName: string;
 }
@@ -22,7 +20,7 @@ export const verifyAuthToken = async (token: string): Promise<{ valid: boolean; 
         );
 
         const user = payload as JWTUser;
-        
+
         // 2. ペイロードの必須フィールドチェック
         if (!user.userName) {
             return {
@@ -31,41 +29,25 @@ export const verifyAuthToken = async (token: string): Promise<{ valid: boolean; 
             };
         }
 
-        // 3. Redisに保存されているトークンと照合
-        try {
-            const storedToken = await redisClient.get(`user:${user.userName}`);
-            
-            if (!storedToken) {
-                return {
-                    valid: false,
-                    error: "Token not found in session store"
-                };
-            }
-
-            if (storedToken !== token) {
-                return {
-                    valid: false,
-                    error: "Token mismatch - session may have been invalidated"
-                };
-            }
-
-            // 4. すべての検証が成功
-            return {
-                valid: true,
-                user: user
-            };
-
-        } catch (redisError) {
-            console.error("Redis error during token verification:", redisError);
+        // 3. Check token expired time
+        const currentTime = Math.floor(Date.now() / 1000);
+        const exp = payload.exp;
+        if (exp && currentTime > exp) {
             return {
                 valid: false,
-                error: "Failed to verify session"
+                error: "Token has expired"
             };
         }
 
+        // 4. すべての検証が成功
+        return {
+            valid: true,
+            user: user
+        };
+
     } catch (jwtError) {
         console.error("JWT verification error:", jwtError);
-        
+
         // エラーの種類に応じてメッセージを返す
         if (jwtError instanceof Error) {
             if (jwtError.message.includes('expired')) {
@@ -89,23 +71,11 @@ export const verifyAuthToken = async (token: string): Promise<{ valid: boolean; 
     }
 };
 
-// トークンをRedisから削除する関数（ログアウト時に使用）
-export const invalidateToken = async (userName: string): Promise<boolean> => {
+export const deleteAuthToken = async () => {
     try {
-        await redisClient.del(`user:${userName}`);
-        return true;
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
     } catch (error) {
-        console.error("Failed to invalidate token:", error);
-        return false;
-    }
-};
-
-// ユーザー名からトークンを取得する関数
-export const getStoredToken = async (userName: string): Promise<string | null> => {
-    try {
-        return await redisClient.get(`user:${userName}`);
-    } catch (error) {
-        console.error("Failed to get stored token:", error);
-        return null;
+        console.error("Error deleting auth token:", error);
     }
 };
