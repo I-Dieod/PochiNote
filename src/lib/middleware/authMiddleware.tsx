@@ -1,9 +1,42 @@
 // src/lib/middleware/authMiddleware.tsx
 
-import { jwtVerify, JWTPayload } from "jose";
+import { randomUUID } from "crypto";
+import { SignJWT, jwtVerify, JWTPayload } from "jose";
+
+import { user } from "@/types";
 
 interface JWTUser extends JWTPayload {
     userName: string;
+}
+
+export const createJWTToken = async (user: user) => {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        throw new Error("JWT_SECRET is not configured");
+    }
+
+    const header = {
+        alg: "HS256",
+        typ: "JWT"
+    };
+
+    const iat = Math.floor(Date.now() / 1000);
+    const exp = iat + 3600; // 1時間有効
+    const payload = {
+        userName: user.userName,
+        email: user.email,
+        jti: randomUUID(), // JWT ID（ランダム性を追加）
+    };
+
+    const encoder = new TextEncoder();
+    const token = await new SignJWT(payload)
+        .setProtectedHeader(header)
+        .setIssuedAt(iat)
+        .setExpirationTime(exp)
+        .setJti(payload.jti)
+        .sign(encoder.encode(jwtSecret));
+
+    return token;
 }
 
 export const verifyAuthToken = async (token: string): Promise<{ valid: boolean; user?: JWTUser; error?: string }> => {

@@ -1,5 +1,13 @@
 // src/types/index.tsx
 
+export type user = {
+    tableId: number;
+    userName: string;
+    email: string;
+    password: string;
+    registeredAt: Date;
+}
+
 export interface BalanceDataType {
     date: string;
     balance: number;
