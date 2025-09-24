@@ -1,5 +1,4 @@
 import type { Config } from "drizzle-kit";
-import 'dotenv/config';
 
 // 環境変数の確認とログ出力
 const databaseUrl = process.env.PUBLIC_DATABASE_URL;
