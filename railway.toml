@@ -3,7 +3,7 @@ builder = "NIXPACKS"
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "./scripts/check-db.ts && ./scripts/railway-start.sh"
+startCommand = "npx tsx ./scripts/check-db.ts && ./scripts/railway-start.sh"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"
