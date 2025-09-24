@@ -8,9 +8,9 @@ import { useAtom } from "jotai";
 
 import SideBar from "@/components/Home/SideBar";
 import NavBar from "@/components/Home/NavBar";
-import NoteTable from "@/components/Home/TransactionTable";
 import { BalanceChart } from "@/components/Home/BalanceChart";
 import { CircleChart } from "@/components/Home/CircleChart";
+import TransactionTable from "@/components/Home/TransactionTable";
 
 import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { dropdownOpenAtom } from "@/atoms/BalanceChart.atom";
@@ -24,13 +24,14 @@ export default function Home() {
     console.log("Page rendered with isLogedIn:", isLogedIn);
   }, [isLogedIn]);
 
-  setIsLogedIn(false); // TODO: release時に削除
+  //setIsLogedIn(false); // TODO: release時に削除
   console.log("Home component rendering, isLogedIn:", isLogedIn);
 
   // モーダル外クリックで閉じる
   const handleBGClick = () => {
     setDropdownOpen(false);
   }
+
   return (
     <>
       {isLogedIn ? (
@@ -49,7 +50,7 @@ export default function Home() {
                 <CircleChart />
               </div>
               <div id="Table-Container" className="w-full p-4">
-                <NoteTable />
+                <TransactionTable />
               </ div>
             </div>
           </div>
@@ -80,7 +81,7 @@ export default function Home() {
           </p>
           <div id="Main-Container" className="flex flex-col items-center justify-top h-screen relative z-10 px-4">
             <div id="catch-phrase" className="h-20 mb-4 flex items-center justify-center">
-              <h1 className="text-6xl md:text-5xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-gradient-to-r from-indigo-600 to-fuchsia-500 bg-clip-text text-transparent">
+              <h1 className="text-6xl md:text-5xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-linear-65 from-emerald-400 to-indigo-300 bg-clip-text text-transparent">
                 Be smart, Be steady.
               </h1>
             </div>
