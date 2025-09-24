@@ -1,9 +1,20 @@
+import type { Config } from "drizzle-kit";
 import 'dotenv/config';
 
+// 環境変数の確認とログ出力
+const databaseUrl = process.env.DATABASE_URL;
+console.log("DATABASE_URL exists:", !!databaseUrl);
+if (!databaseUrl) {
+    throw new Error("DATABASE_URL environment variable is required");
+}
+
 export default {
-    schema: './src/lib/config/db/schema/*.ts',
-    dialect: 'postgresql',
+    schema: "./src/lib/config/db/schema/*.ts",
+    out: "./drizzle",
+    dialect: "postgresql",
     dbCredentials: {
-        connectionString: process.env.DATABASE_URL,
+        url: databaseUrl,
     },
-} as const;
+    verbose: true,
+    strict: true,
+} satisfies Config;
