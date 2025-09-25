@@ -9,6 +9,7 @@ export const users = pgTable("users", {
     email: varchar("email", { length: 255 }).notNull().unique(), // メールアドレス
     password: varchar("password", { length: 255 }).notNull(), // ハッシュ化されたパスワード
     registeredAt: timestamp("registered_at").defaultNow().notNull(), // 登録日時
+    testBrank: varchar("test_blank", { length: 100 }), // テスト用空白カラム
 });
 
 export const usersProperties = pgTable("users_properties", {
