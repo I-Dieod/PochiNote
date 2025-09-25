@@ -12,7 +12,7 @@ echo "✅ Environment variables validated"
 
 # データベースのスキーマを同期（テーブル作成）
 echo "📊 Pushing database schema..."
-npx drizzle-kit push --yes --verbose
+npx drizzle-kit push --force --verbose
 
 # データベースの初期化とシード
 echo "🌱 Running database seed..."
