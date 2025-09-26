@@ -14,6 +14,7 @@ import TransactionTable from "@/components/Home/TransactionTable";
 import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { dropdownOpenAtom } from "@/atoms/BalanceChart.atom";
 import { showSelectorLoginOrSignupAtom } from "@/atoms/NavBar.atom";
+import MobileNavBar from "@/components/Home/MobileNavBar";
 
 export default function Home() {
     const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
@@ -68,10 +69,11 @@ export default function Home() {
                     <div
                         className="absolute inset-0 z-0"
                         style={{
-                            backgroundImage: `
-        linear-gradient(to right, #d1d5db 1px, transparent 1px),
-        linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
-        `,
+                            backgroundImage:
+                                `
+                            linear-gradient(to right, #d1d5db 1px, transparent 1px),
+                            linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
+                            `,
                             backgroundSize: "32px 32px",
                             WebkitMaskImage:
                                 "radial-gradient(ellipse 80% 80% at 0% 0%, #000 50%, transparent 90%)",
@@ -80,8 +82,18 @@ export default function Home() {
                         }}
                     />
                     {/* Your Content/Components */}
-                    <div id="NavBar-Container">
+                    <div 
+                    id="Desktop-NavBar-Container"
+                    className="hidden sm:inline"
+                    >
                         <NavBar />
+                    </div>
+                    <div id="Mobile-NavBar-Container"
+                    className="sm:hidden"
+                    >
+                    <div>
+                        <MobileNavBar />
+                    </div>
                     </div>
                     {/* TODO:releaseブランチでは消す */}
                     <p style={{ color: 'red', fontSize: '20px', textAlign: 'center', marginTop: '50px' }}>
@@ -89,26 +101,26 @@ export default function Home() {
                     </p>
                     <div
                         id="Main-Container"
-                        className="flex flex-col items-center justify-top h-screen relative z-10 px-4"
+                        className="flex flex-col items-center justify-top h-screen relative z-10 px-4 sm:px-6 lg:px-8"
                         onClick={handleSelectorLoginOrSignupBGClick}
                     >
                         <div id="catch-phrase" className="h-20 mb-4 flex items-center justify-center">
-                            <h1 className="text-6xl md:text-5xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-linear-65 from-emerald-400 to-indigo-300 bg-clip-text text-transparent">
+                            <h1 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-linear-65 from-emerald-400 to-indigo-300 bg-clip-text text-transparent">
                                 Be smart, Be steady.
                             </h1>
                         </div>
                         <div id="description-container" className="mb-8 w-full text-center text-gray-600 p-6">
-                            <p className="text-lg md:text-xl ">
+                            <p className="text-base sm:text-lg lg:text-2xl">
                                 <strong>PochiNote</strong>は、あなたの資産管理をシンプルかつ効果的にサポートするためのモダンアプリケーションです。<br />
                                 収支の可視化、目標設定、そして賢いお金の使い方を提案します。<br />
                             </p>
                         </div>
                         <div id="feature-cards" className="flex flex-col gap-6 mb-8 w-full max-w-6xl">
                             {/* Feature Card 1 */}
-                            <div className="flex justify-between bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                            <div className="flex flex-col sm:flex-row justify-between bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
                                 <div className="flex-col">
-                                    <h2 className="text-xl font-semibold mb-4 text-gray-800">収支の可視化</h2>
-                                    <p className="text-gray-600 text-xl">
+                                    <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800">収支の可視化</h2>
+                                    <p className="my-auto py-4 text-gray-600 text-md">
                                         直感的なチャートとグラフで、あなたの収入と支出を一目で把握できます。<br />
                                         日々の取引を簡単に記録し、財務状況をリアルタイムで確認しましょう。
                                     </p>
@@ -116,21 +128,21 @@ export default function Home() {
                                 <img
                                     src="/feature-visualization.png"
                                     alt="収支の可視化"
-                                    className="h-48 mt-4 rounded-md shadow-sm"
+                                    className="h-30 sm:h-48 mt-4 rounded-md shadow-sm"
                                 />
                             </div>
                             {/* Feature Card 2 */}
-                            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
-                                <h2 className="text-xl font-semibold mb-4 text-gray-800">目標設定と追跡</h2>
-                                <p className="text-gray-600">
+                            <div className="flex flex-col sm:flex-row justify-between bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                                <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800">目標設定と追跡</h2>
+                                <p className="my-auto py-4 text-gray-600 text-md">
                                     貯蓄目標や支出制限を設定し、進捗を追跡します。<br />
                                     目標達成に向けたアドバイスとリマインダーで、モチベーションを維持しましょう。
                                 </p>
                             </div>
                             {/* Feature Card 3 */}
-                            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
-                                <h2 className="text-xl font-semibold mb-4 text-gray-800">賢いお金の使い方</h2>
-                                <p className="text-gray-600">
+                            <div className="flex flex-col sm:flex-row justify-between bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+                                <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800">賢いお金の使い方</h2>
+                                <p className="my-auto py-4 text-gray-600 text-md">
                                     あなたの支出パターンを分析し、節約のヒントや投資の機会を提案します。<br />
                                     賢い財務管理で、将来の安心を手に入れましょう。
                                 </p>
