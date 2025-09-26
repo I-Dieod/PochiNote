@@ -2,10 +2,53 @@
 
 "use client";
 
+import { useAtom } from "jotai";
+
+import { isLogedInAtom, authTokenAtom, UserNameAtom } from "@/atoms/auth/auth.atom";
+import { deleteAuthToken } from "@/lib/middleware/authMiddleware";
+
 export default function SideBar() {
+    // ユーザー状態
+    const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
+    const [authToken, setAuthToken] = useAtom(authTokenAtom);
+    const [userName, setUserName] = useAtom(UserNameAtom);
+    // ログアウト処理
+    const handleLogout = async () => {
+        console.log("Send logout request for", { authToken });
+        try {
+            // サーバーサイドのログアウト処理
+            const response = await fetch("/api/auth/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}` // トークンを送信
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+
+            // クライアントサイドのクリーンアップ
+            // localStorage/sessionStorageのクリア（もし使用している場合）
+            deleteAuthToken();
+
+            // Atomのリセット
+            setIsLogedIn(false);
+            setAuthToken("");
+            setUserName("");
+
+            // next/routerを使用したリダイレクト
+            window.location.href = "/";  // または認証が必要なページからログインページへ
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // エラー処理（必要に応じてユーザーに通知）
+        }
+    };
+
     return (
         <>
-            <div id="Main-Container" className="hidden h-full lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+            <div id="Main-Container" className="hidden h-full lg:flex lg:w-64 lg:flex-col justify-between lg:fixed lg:inset-y-0">
                 <div id="header" className="flex justify-items-start h-16 px-4 pt-2 bg-white dark:bg-gray-900">
                     <img src="/Logo.svg" alt="Logo" className="h-10 w-10 mx-2 my-2" />
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white my-3">PochiNote</h2>
@@ -24,8 +67,14 @@ export default function SideBar() {
                         Settings
                     </div>
                 </div>
-                <div id="Footer" className="mt-auto p-4">
-                    <p className="text-sm text-gray-500">© 2024 PochiNote</p>
+                <div id="Footer" className="flex-col mt-auto p-4">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full rounded-md bg-red-500 my-2 text-white font-semibold hover:bg-red-600 transition"
+                    >
+                        Logout
+                    </button>
+                    <p className="text-sm text-gray-500">© 2025 PochiNote</p>
                 </div>
             </div>
         </>
