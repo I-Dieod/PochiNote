@@ -8,7 +8,6 @@ import { useAtom } from "jotai";
 import { ChevronsRight } from 'lucide-react';
 
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
-import { deleteAuthToken } from '@/lib/middleware/authMiddleware';
 import { showSelectorLoginOrSignupAtom } from '@/atoms/NavBar.atom';
 
 const navigation = [
@@ -24,39 +23,6 @@ export default function NavBar() {
     const [authToken, setAuthToken] = useAtom(authTokenAtom);
 
     const [showSelectorLoginOrSignup, setShowSelectorLoginOrSignup] = useAtom(showSelectorLoginOrSignupAtom);
-
-    // ログアウト処理
-    const handleLogout = async () => {
-        try {
-            // サーバーサイドのログアウト処理
-            const response = await fetch("/api/auth/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authToken}` // トークンを送信
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
-            // クライアントサイドのクリーンアップ
-            // localStorage/sessionStorageのクリア（もし使用している場合）
-            deleteAuthToken();
-
-            // Atomのリセット
-            setIsLogedIn(false);
-            setAuthToken("");
-            setUserName("");
-
-            // next/routerを使用したリダイレクト
-            window.location.href = "/";  // または認証が必要なページからログインページへ
-        } catch (error) {
-            console.error('Logout failed:', error);
-            // エラー処理（必要に応じてユーザーに通知）
-        }
-    };
 
     return (
         <div className="w-full relative">

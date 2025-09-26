@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
         }
 
         const token = request.headers.get("Authorization")?.replace("Bearer ", "") || "";
-
+        console.log("Received logout request:", { token });
         // トークンの検証
         const verificationResult = await verifyAuthToken(token);
 

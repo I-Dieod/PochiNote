@@ -3,27 +3,36 @@
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getUserByEmail } from "@/lib/models/userModel";
+import { getUserByEmail, getUserByUserName } from "@/lib/models/userModel";
 import { createJWTToken } from "@/lib/middleware/authMiddleware";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
-        const { email, password } = await request.json();
-        console.log("Received login request:", { email, password });
+        const { loginString, password } = await request.json();
+        console.log("Received login request:", { loginString, password });
 
         // バリデーション
-        if (!email || !password) {
+        if (!loginString || !password) {
             return NextResponse.json(
                 { message: "Email and password are required" },
                 { status: 400 }
             );
         }
-        if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-            return NextResponse.json(
-                { message: "Invalid email format" },
-                { status: 400 }
-            );
+        // loginStringがメールアドレスかユーザーネームか識別
+        if (loginString.includes("@")) {
+            // メールアドレスとして扱う
+            var email = loginString;
+            if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+                return NextResponse.json(
+                    { message: "Invalid email format" },
+                    { status: 400 }
+                );
+            }
+        } else {
+            // ユーザーネームとして扱う
+            var userName = loginString;
         }
+
         if (password.length < 8) {
             return NextResponse.json(
                 { message: "Password must be at least 8 characters" },
@@ -32,7 +41,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
 
         // ここでユーザー認証のロジックを実装（例：データベース照会）
-        const user = await getUserByEmail(email);
+        // TODO: ユーザー名orメアドのログインロジックに変更
+        if (!userName) {
+            var user = await getUserByEmail(email);
+        } else {
+            var user = await getUserByUserName(userName);
+        }
         if (!user) {
             return NextResponse.json(
                 { error: "Invalid credentials, Empty search results by Email" },
