@@ -6,7 +6,9 @@ export const UserNameAtom = atom<string>("");
 export const MailAtom = atom<string>("");
 export const PasswordAtom = atom<string>("");
 export const ConfirmPasswordAtom = atom<string>("");
+
 export const ErrorMessageAtom = atom<string>("");
 
 export const isLogedInAtom = atom<boolean>(false);
 export const authTokenAtom = atom<string | null>(null);
+export const LoginStringArom = atom<string>("");

@@ -5,7 +5,15 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 import { AuthActionProps } from "@/types";
-import { UserNameAtom, MailAtom, PasswordAtom, ErrorMessageAtom, authTokenAtom, isLogedInAtom } from "@/atoms/auth/auth.atom";
+import {
+    UserNameAtom,
+    MailAtom,
+    PasswordAtom,
+    ErrorMessageAtom,
+    authTokenAtom,
+    isLogedInAtom,
+    LoginStringArom
+} from "@/atoms/auth/auth.atom";
 
 export default function LoginForm({ action, onSubmit, onSuccess, onError }: AuthActionProps) {
     const [userName, setUserName] = useAtom(UserNameAtom);
@@ -17,6 +25,7 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
     // ローディング状態を管理
     const [isLoading, setIsLoading] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+    const [loginString, setLoginString] = useAtom(LoginStringArom);
 
     const router = useRouter();
 
@@ -34,9 +43,11 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
             console.error("Failed to save auth data:", error);
         }
     };
+
+    // フォーム送信ハンドラー
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Send request for", { email, password });
+        console.log("Send request for", { loginString, password });
         setIsLoading(true); // ローディング開始
 
         onSubmit(true);
@@ -44,7 +55,7 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
             const loginResponse = await fetch(action, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ loginString, password }),
             });
 
             if (!loginResponse.ok) {
@@ -101,16 +112,16 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
                 </div>
             )}
             <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">メールアドレス</label>
-                <input type="email"
-                    id="email"
-                    name="email"
-                    value={email}
+                <label htmlFor="loginString" className="block text-sm font-medium text-gray-700">メールアドレスまたはユーザー名</label>
+                <input type="text"
+                    id="loginString"
+                    name="loginString"
+                    value={loginString}
                     required
                     disabled={isLoading} // ローディング中は無効化
 
                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-                    onChange={(e) => setEMail(e.target.value)}
+                    onChange={(e) => setLoginString(e.target.value)}
                 />
             </div>
             <div>
@@ -127,7 +138,7 @@ export default function LoginForm({ action, onSubmit, onSuccess, onError }: Auth
             </div>
             <button type="submit"
                 className="w-full rounded-md bg-blue-500 py-2 text-white font-semibold hover:bg-blue-600 transition"
-                disabled={!email || !password}
+                disabled={!loginString || !password}
             >
                 {isLoading ? (
                     <>
