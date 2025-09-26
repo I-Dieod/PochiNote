@@ -3,12 +3,13 @@
 "use client";
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAtom } from "jotai";
 import { ChevronsRight } from 'lucide-react';
 
 import { UserNameAtom, authTokenAtom, isLogedInAtom } from '@/atoms/auth/auth.atom';
 import { deleteAuthToken } from '@/lib/middleware/authMiddleware';
+import { showSelectorLoginOrSignupAtom } from '@/atoms/NavBar.atom';
 
 const navigation = [
     { name: 'Dashboard', href: '#' },
@@ -21,6 +22,8 @@ export default function NavBar() {
     const [userName, setUserName] = useAtom(UserNameAtom);
     const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
     const [authToken, setAuthToken] = useAtom(authTokenAtom);
+
+    const [showSelectorLoginOrSignup, setShowSelectorLoginOrSignup] = useAtom(showSelectorLoginOrSignupAtom);
 
     // ログアウト処理
     const handleLogout = async () => {
@@ -92,18 +95,39 @@ export default function NavBar() {
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute inset-y-0 right-0 flex items-left pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
-                            <div
-                                className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-indigo-400 rounded-md h-10 w-20"
-                            >
-                                <a
-                                    href="/signup"
-                                    className="block w-full text-center px-4 py-2 text-sm font-medium text-white">
-                                    Try for free
-                                </a>
-                                <ChevronsRight color="white" size={32} />
+                        <div className="flex-col items-center justify-center">
+                            <div className="absolute inset-y-0 right-0 flex items-left pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+                                <div
+                                    className="flex items-center justify-between block w-full text-center px-2 py-2 text-sm font-medium text-white bg-emerald-500 hover:bg-indigo-400 rounded-md h-10 w-20"
+                                    onClick={() => setShowSelectorLoginOrSignup(true)}
+
+                                >
+                                    <p
+                                        className="block w-full text-center px-4 py-2 text-sm font-medium text-white"
+                                    >
+                                        Try for free
+                                    </p>
+                                    <ChevronsRight color="white" size={32} />
+                                </div>
                             </div>
+                            {showSelectorLoginOrSignup &&
+                                <div className="absolute top-12 right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                                    <a
+                                        href="/login"
+                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                    >
+                                        Log In
+                                    </a>
+                                    <a
+                                        href="/signup"
+                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                    >
+                                        Sign Up
+                                    </a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
