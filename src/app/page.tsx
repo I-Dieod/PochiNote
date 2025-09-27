@@ -28,6 +28,7 @@ export default function Home() {
         console.log("Page rendered with isLogedIn:", isLogedIn);
     }, [isLogedIn]);
 
+    setIsLogedIn(true); // release時に削除
     console.log("Home component rendering, isLogedIn:", isLogedIn);
 
     // モーダル外クリックで閉じる
@@ -113,6 +114,10 @@ export default function Home() {
                     >
                         <MobileNavBar />
                     </div>
+                    {/* TODO:releaseブランチでは消す */}
+                    <p style={{ color: 'red', fontSize: '20px', textAlign: 'center', marginTop: '50px' }}>
+                        未ログイン状態の表示
+                    </p>
                     <div
                         id="Main-Container"
                         className="flex flex-col items-center justify-top h-screen relative z-10 px-4 sm:px-6 lg:px-8"
