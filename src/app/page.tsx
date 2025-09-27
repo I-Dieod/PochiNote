@@ -14,7 +14,8 @@ import TransactionTable from "@/components/Home/TransactionTable";
 import { isLogedInAtom } from "@/atoms/auth/auth.atom";
 import { dropdownOpenAtom } from "@/atoms/BalanceChart.atom";
 import { showSelectorLoginOrSignupAtom } from "@/atoms/NavBar.atom";
-import MobileNavBar from "@/components/Home/MobileNavBar";
+import MobileNavBar from "@/components/Home/MobileComponents/MobileNavBar";
+import MobileBottomNavBar from "@/components/Home/MobileComponents/MobileBottomNavBar";
 
 export default function Home() {
     const [isLogedIn, setIsLogedIn] = useAtom(isLogedInAtom);
@@ -42,19 +43,39 @@ export default function Home() {
             {isLogedIn ? (
                 <div
                     id="Screen"
-                    className="gap-4 min-h-screen items-center justify-center"
+                    className="min-h-screen w-full"
                     onClick={handleDropdownBGClick}
                 >
-                    <div id="Main-container" className="flex">
-                        <div id="SideBar-Container">
+                    <div id="Main-container" className="flex flex-col sm:flex-row gap-4 min-h-screen w-full justify-between">
+                        <div
+                            id="SideBar-Container"
+                            className="hidden sm:block"
+                        >
                             <SideBar />
                         </div>
-                        <div id="Content-Container" className="flex-1 flex flex-col min-h-screen ml-64 bg-slate-100">
-                            <div id="Chart-Containers" className="flex flex-col md:flex-row h-150 gap-4 p-4 dark:bg-gray-900">
+                        <div
+                            id="Mobile-BottomNavBar-Container"
+                            className="sm:hidden bottom-0 w-full fixed z-15"
+                        >
+                            <MobileBottomNavBar />
+                        </div>
+                        <div
+                            id="Content-Container"
+                            className="flex flex-col sm:flex-1 min-h-screen sm:ml-64 bg-slate-100"
+                        >
+                            <div
+                                id="Chart-Containers"
+                                className="flex flex-col gap-4 p-4 h-auto sm:flex-row sm:h-150  dark:bg-gray-900"
+                            >
                                 <BalanceChart />
-                                <CircleChart />
-                            </div>
-                            <div id="Table-Container" className="w-full p-4">
+                                <div className="hidden sm:block">
+                                    <CircleChart />
+                                </div>
+                            </ div>
+                            <div
+                                id="Table-Container"
+                                className="w-full p-4"
+                            >
                                 <TransactionTable />
                             </ div>
                         </div>
@@ -98,12 +119,13 @@ export default function Home() {
                         onClick={handleSelectorLoginOrSignupBGClick}
                     >
                         <div id="catch-phrase" className="h-20 mb-4 flex items-center justify-center">
-                            <h1 className="mt-4 text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-linear-65 from-emerald-400 to-indigo-300 bg-clip-text text-transparent">
+                            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold font-stretch-expanded tracking-wide text-shadow-lg/20 bg-linear-65 from-emerald-400 to-indigo-300 bg-clip-text text-transparent">
                                 Be smart, Be steady.
                             </h1>
                         </div>
                         <div id="description-container" className="mb-8 w-full text-center text-gray-600 p-6">
                             <p className="text-base sm:text-lg lg:text-2xl">
+                                {/* TODO:改行の場所変えられるなら変える */}
                                 <strong>PochiNote</strong>は、あなたの資産管理をシンプルかつ効果的にサポートするためのモダンアプリケーションです。<br />
                                 収支の可視化、目標設定、そして賢いお金の使い方を提案します。<br />
                             </p>
