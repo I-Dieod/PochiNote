@@ -48,8 +48,8 @@ export default function SideBar() {
 
     return (
         <>
-            <div id="Main-Container" className="hidden h-full lg:flex lg:w-64 lg:flex-col justify-between lg:fixed lg:inset-y-0">
-                <div id="header" className="flex justify-items-start h-16 px-4 pt-2 bg-white dark:bg-gray-900">
+            <div id="Main-Container" className="relative sm:h-full sm:flex sm:w-64 sm:flex-col justify-between sm:fixed bg-white">
+                <div id="header" className="flex justify-items-start h-16 px-4 pt-2  dark:bg-gray-900">
                     <img src="/Logo.svg" alt="Logo" className="h-10 w-10 mx-2 my-2" />
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white my-3">PochiNote</h2>
                 </div>
