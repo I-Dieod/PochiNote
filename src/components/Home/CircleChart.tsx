@@ -166,7 +166,7 @@ export const CircleChart = () => {
 
   const TYPE_COLORS = ["#82ca9d", "#ff7675"];
 
-  const onPieEnter = (_: unknown, index: number) => {
+  const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index);
   };
 
