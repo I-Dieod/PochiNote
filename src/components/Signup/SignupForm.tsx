@@ -208,7 +208,8 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
                 />
             </div>
             <div className="buttonGroup">
-                <button type="submit"
+                <button
+                    type="submit"
                     className="w-full rounded-md bg-blue-500 py-2 text-white font-semibold hover:bg-blue-600 transition"
                     disabled={!userName || !email || !password || password !== confirmPassword}
                 >
@@ -225,6 +226,9 @@ export default function SignupForm({ action, onSubmit, onSuccess, onError }: Aut
                         "サインアップ"
                     )}
                 </button>
+                {password !== confirmPassword && (
+                    <div className="text-red-500 text-center mt-2">パスワードが一致しません</div>
+                )}
                 <button type="button"
                     className="w-full rounded-md bg-gray-500 py-2 text-white font-semibold hover:bg-gray-600 transition"
                     onClick={handleReset}
