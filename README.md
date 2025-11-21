@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 現在PochiNoteはβテスト中です。テストユーザーのみログイン可能で、サインアップはできません。
 
-## Getting Started
+# Service URL
+https://pochinote-production-eaf1.up.railway.app/
 
-First, run the development server:
+# Welcome to PoChiNote
+PoChiNoteはあなたの資産管理をシンプルかつ効果的にサポートするためのモダンアプリケーションです。
+収支の可視化、目標設定、そして賢いお金の使い方を提案します。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+アプリケーションはRailwayを利用して公開されています。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 背景
+貯金が苦手な人のために、資産額の推移をグラフで可視化し、日々の節約の効果などを実感しやすい形にすることで貯蓄意識が刺激される家計簿アプリケーションを作りました。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# 現在の機能
+- 収支の可視化
+- 目標設定
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# 今後の機能
+- LLMを利用した資産管理のアドバイス
+- ユーザー間の交流機能
+- モバイルアプリケーションの開発
