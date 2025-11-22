@@ -59,7 +59,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // ユーザー作成
     const txResult = await createUser(userName, email, passwordHash);
     const user = txResult[0];
-    if (!user || user.length === 0) {
+    if (!user) {
       return NextResponse.json(
         { message: "User creation failed" },
         { status: 500 },
