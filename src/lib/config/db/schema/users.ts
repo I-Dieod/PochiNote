@@ -7,9 +7,7 @@ import {
   varchar,
   timestamp,
   numeric,
-  date,
 } from "drizzle-orm/pg-core";
-import { text } from "drizzle-orm/sqlite-core";
 
 export const users = pgTable("users", {
   tableId: serial("table_id").notNull().primaryKey(),
@@ -22,23 +20,27 @@ export const users = pgTable("users", {
 export const usersProperties = pgTable("users_properties", {
   userName: varchar("user_name", { length: 100 }).notNull(),
   // 資産情報
+  // 現在の資産
   currentProperty: numeric("current_property", { precision: 12, scale: 2 })
     .notNull()
-    .default("0"), // 現在の資産
+    .default("0"),
+
+  // 資産目標
   propertyGoal: numeric("property_goal", { precision: 12, scale: 2 })
     .notNull()
-    .default("0"), // 資産目標
-
+    .default("0"),
   // 目標期限
-  goalDeadline: date("goal_deadline"), // 目標達成期限
-  goalMotivation: text("goal_motivation", { length: 255 })
-    .notNull()
-    .default(""), // 目標達成の動機
+  goalDeadline: timestamp("goal_deadline").notNull(), // 目標達成期限
+  // モチベーション
+  goalMotivation: varchar("goal_motivation", { length: 255 }).notNull(),
+  // 注意事項
+  goalNote: varchar("goal_note", { length: 255 }).notNull(),
 
   // 月次目標（オプション）
   monthlyGoal: numeric("monthly_goal", { precision: 12, scale: 2 }).default(
     "0",
   ), // 月次貯蓄目標
+  monthlyGoalDeadline: timestamp("monthly_goal_deadline"), // 月次貯蓄目標達成期限
 
   // 資産の内訳（オプション - より詳細な管理が必要な場合）
   cashAmount: numeric("cash_amount", { precision: 12, scale: 2 }).default("0"), // 現金・預金
