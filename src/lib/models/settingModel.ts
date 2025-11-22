@@ -8,7 +8,7 @@ import { Goals } from "@/types/index";
 
 export const setGoal = async (userName: string, goalData: Goals) => {
   try {
-    const goalDeadlineDate = new Date(goalData.goalDeadline);
+    const goalDeadlineDate = new Date(goalData.goalDeadline).toISOString();
     const monthlyGoalDeadlineDate = goalData.monthlyGoalDeadline
       ? new Date(goalData.monthlyGoalDeadline)
       : null;
