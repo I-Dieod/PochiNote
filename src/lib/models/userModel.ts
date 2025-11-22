@@ -2,49 +2,80 @@
 
 import { eq } from "drizzle-orm";
 
-import { users } from "@/lib/config/db/schema/users";
+import { users, usersProperties } from "@/lib/config/db/schema/users";
 import { db } from "@/lib/config/db/db";
 
-export const createUser = async (userName: string, email: string, passwordHash: string) => {
-    try {
-        const result = await db.insert(users).values({
-            userName: userName,
-            email: email,
-            password: passwordHash,
-        }).returning();
-        return result;
-    } catch (error) {
-        console.error("Error in createUser function:", error);
-        throw new Error("Failed to create user"); //クライアント側でキャッチされるようにエラーを再スロー;
-    }
-}
+export const createUser = async (
+  userName: string,
+  email: string,
+  passwordHash: string,
+) => {
+  try {
+    const result = await db.transaction(async (tx) => {
+      const userResult = await tx
+        .insert(users)
+        .values({
+          userName: userName,
+          email: email,
+          password: passwordHash,
+        })
+        .returning();
+
+      // users_propertiesテーブルに初期レコードを挿入
+      const userPropResult = await tx
+        .insert(usersProperties)
+        .values({
+          userName: userName,
+          propertyGoal: "0",
+          goalDeadline: new Date(),
+          goalMotivation: "",
+          goalNote: "",
+          monthlyGoal: "0",
+          monthlyGoalDeadline: null,
+        })
+        .returning();
+      return [userResult, userPropResult];
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error in createUser function:", error);
+    throw new Error("Failed to create user"); //クライアント側でキャッチされるようにエラーを再スロー;
+  }
+};
 
 export const getUserByEmail = async (email: string) => {
-    try {
-        const [result] = await db.select().from(users).where(eq(users.email, email));
-        // ユーザーが見つからない場合は null を返す
-        if (!result) {
-            console.warn(`User with email ${email} not found`);
-            return null;
-        }
-
-        return result;
-    } catch (error) {
-        console.error("Error in findUserByEmail function:", error);
-        throw new Error("Failed to get user by email");
+  try {
+    const [result] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+    // ユーザーが見つからない場合は null を返す
+    if (!result) {
+      console.warn(`User with email ${email} not found`);
+      return null;
     }
-}
+
+    return result;
+  } catch (error) {
+    console.error("Error in findUserByEmail function:", error);
+    throw new Error("Failed to get user by email");
+  }
+};
 
 export const getUserByUserName = async (userName: string) => {
-    try {
-        const [result] = await db.select().from(users).where(eq(users.userName, userName));
-        if (!result) {
-            console.warn(`User with userName ${userName} not found`);
-            return null;
-        }
-        return result;
-    } catch (error) {
-        console.error("Error in getUserByUserName function:", error);
-        throw new Error("Failed to get user by userName");
+  try {
+    const [result] = await db
+      .select()
+      .from(users)
+      .where(eq(users.userName, userName));
+    if (!result) {
+      console.warn(`User with userName ${userName} not found`);
+      return null;
     }
-}
+    return result;
+  } catch (error) {
+    console.error("Error in getUserByUserName function:", error);
+    throw new Error("Failed to get user by userName");
+  }
+};

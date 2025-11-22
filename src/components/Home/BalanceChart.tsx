@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   Tooltip,
@@ -15,14 +14,17 @@ import {
 } from "recharts";
 
 import { DropdownMenu } from "./SubComponents/DropDownMenu";
-import { selectedPeriodAtom } from "@/atoms/BalanceChart.atom";
+import { goalsAtom, selectedPeriodAtom } from "@/atoms/BalanceChart.atom";
 import { transactionsAtom } from "@/atoms/TransactionTable.atom";
-import { authTokenAtom } from "@/atoms/auth/auth.atom";
+import { authTokenAtom, UserNameAtom } from "@/atoms/auth/auth.atom";
 
 export function BalanceChart() {
+  const [userName] = useAtom(UserNameAtom);
   const [authToken] = useAtom(authTokenAtom);
 
   const [transactions] = useAtom(transactionsAtom);
+  const [goals, setGoals] = useAtom(goalsAtom);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
   const [chartHeight, setChartHeight] = useState(500);
@@ -137,16 +139,84 @@ export function BalanceChart() {
   };
 
   const [balanceDataList, setBalanceDataList] = useState<
-    { date: string; balance: number }[]
+    { date: string; balance: number; goalAmount?: number }[]
   >([]);
+
+  // 目標資産額を期間に応じて計算する関数
+  const calcGoalData = () => {
+    if (!goals?.propertyGoal) return [];
+
+    const goalAmount = Number(goals.propertyGoal);
+    const goalDataList: {
+      date: string;
+      balance: number;
+      goalAmount: number;
+    }[] = [];
+
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const dateStr = currentDate.toISOString().split("T")[0];
+      goalDataList.push({
+        date: dateStr,
+        balance: 0, // balanceは使わないが型の互換性のため
+        goalAmount: goalAmount,
+      });
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return goalDataList;
+  };
 
   useEffect(() => {
     const fetchBalances = async () => {
-      const data = await calcBalances(transactions);
-      setBalanceDataList(data);
+      const balanceData = await calcBalances(transactions);
+      const goalData = calcGoalData();
+
+      // balanceDataとgoalDataを結合
+      const mergedData = balanceData.map((item) => {
+        const goalItem = goalData.find((goal) => goal.date === item.date);
+        return {
+          ...item,
+          goalAmount: goalItem?.goalAmount,
+        };
+      });
+
+      setBalanceDataList(mergedData);
     };
     fetchBalances();
-  }, [transactions, selectedPeriod]); // selectedPeriodを依存配列に追加
+  }, [transactions, selectedPeriod, goals]); // goalsも依存配列に追加
+
+  const getGoals = async () => {
+    if (!userName || !authToken) {
+      console.log("Missing userName or authToken, skipping data fetch");
+      return;
+    }
+
+    try {
+      const fetchGoalResponse = await fetch(
+        `/api/settings/getGoals?userName=${encodeURIComponent(userName)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
+      );
+
+      if (fetchGoalResponse.ok) {
+        const response = await fetchGoalResponse.json();
+        setGoals(response.goalData);
+        console.log("Fetching user's goal from API:", response.goalData);
+      }
+    } catch (error) {
+      console.error("Error fetching user's goal:", error);
+    }
+  };
+
+  useEffect(() => {
+    getGoals();
+  }, [userName, authToken]); // userNameまたはauthTokenが変更された時のみ実行
 
   // より細かいブレークポイント対応
   const getResponsiveHeight = () => {
@@ -216,6 +286,7 @@ export function BalanceChart() {
             tickFormatter={(value) => `¥${value.toLocaleString()}`}
           />
           {/* TODO: Periodに応じてラインタイプを変える */}
+          {/* 資産推移ライン */}
           <Line
             type="monotone"
             dataKey="balance"
@@ -230,11 +301,30 @@ export function BalanceChart() {
               fill: "white",
             }}
           />
+          {/* 目標資産額ライン */}
+          {goals?.propertyGoal && (
+            <Line
+              type="monotone"
+              dataKey="goalAmount"
+              stroke="#ff6b6b"
+              strokeWidth={2}
+              strokeDasharray="5 5" // 破線スタイル
+              dot={false}
+              activeDot={{
+                r: 4,
+                stroke: "#ff6b6b",
+                strokeWidth: 2,
+                fill: "white",
+              }}
+            />
+          )}
           <Tooltip
-            formatter={(value) => [
-              `¥${Number(value).toLocaleString()}`,
-              "資産額",
-            ]}
+            formatter={(value, name) => {
+              if (name === "goalAmount") {
+                return [`¥${Number(value).toLocaleString()}`, "目標資産額"];
+              }
+              return [`¥${Number(value).toLocaleString()}`, "資産額"];
+            }}
             labelFormatter={(label) => new Date(label).toLocaleDateString()}
             cursor={{ stroke: "#37b18cff", strokeDasharray: "3 3" }} // ホバー時の縦線をカスタマイズ
           />

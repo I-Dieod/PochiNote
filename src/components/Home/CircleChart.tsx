@@ -176,6 +176,7 @@ export const CircleChart = () => {
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
           {/* カテゴリー別の内側の円 */}
+          {/* TODO: マウスオーバー時のカテゴリ名表示がUnkownになってる問題 */}
           <Pie
             activeShape={renderActiveShapes}
             data={categoryData}
