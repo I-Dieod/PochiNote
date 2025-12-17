@@ -1,7 +1,7 @@
 # 現在PochiNoteはβテスト中です。テストユーザーのみログイン可能で、サインアップはできません。
-テスト用アカウントを作成しました。データはテスト者全員の入力を受け付けます。
-ユーザー名：testuser
-パスワード：testuser1234
+テスト用アカウントを作成しました。データはテスト者全員の入力を受け付けます。<br>
+ユーザー名：testuser<br>
+パスワード：testuser1234<br>
 
 # Service URL
 https://pochinote-production-eaf1.up.railway.app/
